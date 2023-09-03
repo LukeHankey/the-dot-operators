@@ -1,14 +1,13 @@
 #!/usr/bin/venv python3
 """This the main entry point"""
 
-from os.path import join, split
 from os import listdir
+from os.path import join, split
 from random import choice
-from common import regular_tiles, square_tiles
-from client import (
-    Tile, mainloop, SCREEN_WIDTH, SCREEN_HEIGHT)
-from pygame import init, sprite, display
 
+from client import SCREEN_HEIGHT, SCREEN_WIDTH, Tile, mainloop
+from common import regular_tiles, square_tiles
+from pygame import display, init, sprite
 
 if __name__ == "__main__":
     init()

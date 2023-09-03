@@ -1,10 +1,10 @@
 #!/usr/bin/venv python3
 """This is all the GUI magic"""
 
-from pygame import quit, event, mouse, display, sprite, image
-from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
 from sys import exit
 
+from pygame import display, event, image, mouse, quit, sprite
+from pygame.locals import MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, QUIT
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600

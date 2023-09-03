@@ -1,12 +1,13 @@
 #!/usr/bin/venv python3
 """Core Image Manipulation functionality"""
 
-from PIL.Image import new, open, Image
-from PIL.ImageDraw import Draw
 from math import sqrt
+from operator import itemgetter
 from random import shuffle
 from typing import Callable, Generator
-from operator import itemgetter
+
+from PIL.Image import Image, new, open
+from PIL.ImageDraw import Draw
 
 
 def triangle_tiles(image: Image, width: int, height: int) -> Generator[[[int, int], Image], None, None]:
@@ -61,8 +62,8 @@ def regular_tiles(
 
 
 if __name__ == "__main__":
-    from os.path import join, split
     from os import listdir
+    from os.path import join, split
     from random import choice
     path = join(split(__file__)[0], "images")
     filename = choice([  # get a random image on each game run
