@@ -1,4 +1,6 @@
 #!/usr/bin/venv python3
+"""Core Image Manipulation functionality"""
+
 from PIL.Image import new, open, Image
 from PIL.ImageDraw import Draw
 from math import sqrt
@@ -7,7 +9,7 @@ from typing import Callable, Generator
 from operator import itemgetter
 
 
-def triangle_tiles(image: Image.Image, width: int, height: int) -> Generator[[[int, int], Image], None, None]:
+def triangle_tiles(image: Image, width: int, height: int) -> Generator[[[int, int], Image], None, None]:
     """Tile generator with the inner most loop calling the specific
 
     shape for tiling applies the mask of the shape then continues
@@ -28,7 +30,7 @@ def triangle_tiles(image: Image.Image, width: int, height: int) -> Generator[[[i
             yield (x, y), tile  # second yield for the other half
 
 
-def square_tiles(image: Image.Image, width: int, height: int) -> Generator[[[int, int], Image], None, None]:
+def square_tiles(image: Image, width: int, height: int) -> Generator[[[int, int], Image], None, None]:
     """Tile generator with the inner most loop calling the specific
 
     shape for tiling applies the mask of the shape then continues
@@ -59,6 +61,12 @@ def regular_tiles(
 
 
 if __name__ == "__main__":
-    filename = "tests/test-images/albulena-panduri-nedseTcNTu8-unsplash.jpg"
+    from os.path import join, split
+    from os import listdir
+    from random import choice
+    path = join(split(__file__)[0], "images")
+    filename = choice([  # get a random image on each game run
+        f"images/{filename}" for filename in listdir(path)])
+    filename = join(split(__file__)[0], filename)
     for _, tile in regular_tiles(filename, 4, triangle_tiles):
         tile.show()

@@ -1,7 +1,9 @@
-from pygame import init, quit, event, mouse, display, sprite, image
+#!/usr/bin/venv python3
+"""This is all the GUI magic"""
+
+from pygame import quit, event, mouse, display, sprite, image
 from pygame.locals import QUIT, MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION
 from sys import exit
-from common import regular_tiles, square_tiles
 
 
 SCREEN_WIDTH = 800
@@ -60,19 +62,3 @@ def mainloop(screen, tiles):
         screen.fill((255, 255, 255))
         tiles.draw(screen)
         display.update()
-
-
-if __name__ == "__main__":
-    from os import listdir
-    from random import choice
-    init()
-    screen = display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
-    path = choice([  # get a random image on each game run
-        f"images/{filename}" for filename in listdir("images")])
-
-    tiles = sprite.Group()
-    for pos, image_tile in regular_tiles(path, 16, square_tiles):
-        tiles.add(Tile(pos, image_tile))
-
-    mainloop(screen, tiles)
