@@ -78,19 +78,3 @@ def regular(
     for index, position in enumerate(positions):
         sequence[index][0] = position
     return sequence
-
-
-if __name__ == "__main__":
-    from os import listdir
-    from os.path import join, split
-    from random import choice
-
-    path = join(split(__file__)[0], "images")
-    filename = choice(
-        [  # get a random image on each game run
-            f"../images/{filename}" for filename in listdir(path)
-        ]
-    )
-    filename = join(split(__file__)[0], filename)
-    for _, tile in regular(square_tiles, filename, 4):
-        tile.show()
