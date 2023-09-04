@@ -4,11 +4,14 @@
 from sys import exit
 
 from common import get_image, regular, square_tiles
-from pygame import (
-    Rect, Surface, display, event, image, init, mouse, quit, sprite
-)
+from pygame import Rect, Surface, display, event, image, init, mouse, quit, sprite
 from pygame.locals import (
-    MOUSEBUTTONDOWN, MOUSEBUTTONUP, MOUSEMOTION, QUIT, RESIZABLE, VIDEORESIZE
+    MOUSEBUTTONDOWN,
+    MOUSEBUTTONUP,
+    MOUSEMOTION,
+    QUIT,
+    RESIZABLE,
+    VIDEORESIZE,
 )
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
@@ -28,7 +31,8 @@ class Tile(sprite.Sprite):
         """Basic init method that takes pillow image into pygame image"""
         super().__init__()
         self.image = image.fromstring(
-            cropped_image.tobytes(), cropped_image.size, cropped_image.mode)
+            cropped_image.tobytes(), cropped_image.size, cropped_image.mode
+        )
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.active = False
@@ -39,7 +43,8 @@ class Tile(sprite.Sprite):
         self.active = True
         self.drag_offset = (
             pointer[0] - self.rect.topleft[0],
-            pointer[1] - self.rect.topleft[1])
+            pointer[1] - self.rect.topleft[1],
+        )
 
     def deactivate(self):
         """Remove anything `activate` added"""
@@ -50,7 +55,8 @@ class Tile(sprite.Sprite):
         """Move tile to pointer could be a mouse pointer or anything"""
         self.rect.topleft = (
             pointer[0] - self.drag_offset[0],
-            pointer[1] - self.drag_offset[1])
+            pointer[1] - self.drag_offset[1],
+        )
 
 
 class MenuClient:
@@ -74,15 +80,16 @@ class JigSaw(Surface):
         x_offset = (screen_bounds.width - surface_bounds.width) // 2
         y_offset = (screen_bounds.height - surface_bounds.height) // 2
         self.rect = Rect(
-            x_offset, y_offset,
-            self.size[0] + x_offset, self.size[1] + y_offset)
+            x_offset, y_offset, self.size[0] + x_offset, self.size[1] + y_offset
+        )
         self.center = (x_offset, y_offset)
 
     def translate(self, position: tuple[int, int]):
         """Adjust screen coordinates to jigsaw surface coordinates"""
         offset = (
             position[0] - self.rect.topleft[0],
-            position[1] - self.rect.topleft[1])
+            position[1] - self.rect.topleft[1],
+        )
         return offset
 
 
@@ -113,12 +120,13 @@ class GameClient:
                     if self.jigsaw.rect.collidepoint(mouse.get_pos()):
                         # [::-1] reverse list check is downwards in z depth
                         for tile in self.tiles.sprites()[::-1]:
-                            if tile.rect.collidepoint(self.jigsaw.translate(mouse.get_pos())):
+                            if tile.rect.collidepoint(
+                                self.jigsaw.translate(mouse.get_pos())
+                            ):
                                 # reorder to the top before drag
                                 self.tiles.remove(tile)
                                 self.tiles.add(tile)  # reorder to top
-                                tile.activate(
-                                    mouse.get_pos())
+                                tile.activate(mouse.get_pos())
                                 break
                 if e.type == MOUSEBUTTONUP:
                     for tile in self.tiles.sprites()[::-1]:
