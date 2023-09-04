@@ -3,7 +3,6 @@
 
 from collections.abc import Callable, Generator
 from math import sqrt
-from operator import itemgetter
 from random import shuffle
 
 from PIL.Image import Image, new, open
@@ -25,6 +24,7 @@ def trianglular_tiles(
             tile = image.crop((x, y, x + width, y + height))
             tile.putalpha(mask)
             yield (x, y), tile  # first yeild for half the triangle
+
             mask = new("L", (width, height), 0)
             draw = Draw(mask)
             draw.polygon([(0, 0), (width, 0), (width, height)], fill=255)
@@ -52,9 +52,11 @@ def get_image(
     with open(filename) as image:
         image.thumbnail(max_dimensions)
         num_of_tiles = int(sqrt(num_of_tiles))
+
         width = image.width // num_of_tiles
         height = image.height // num_of_tiles
         image = image.crop((0, 0, num_of_tiles * width, num_of_tiles * height))
+
     return image
 
 
@@ -64,17 +66,23 @@ def regular(
     ],
     image: Image,
     num_of_tiles: int,
-) -> list:
+) -> list[tuple[tuple[int, int], Image]]:
     """Opens image file and splits it into tiles and shuffles them"""
-    sequence = list()
+    sequence: dict[tuple[int, int], Image] = {}
     num_of_tiles = int(sqrt(num_of_tiles))
+
     width = image.width // num_of_tiles
     height = image.height // num_of_tiles
-    for num, (pos, tile) in enumerate(tile_generator(image, width, height)):
-        sequence.append([pos, tile])
+
+    for pos, tile in tile_generator(image, width, height):
+        sequence[pos] = tile
+
     # extract out the positions to shuffle then add back in
-    positions = list(map(itemgetter(0), sequence))
+    positions = list(sequence)
     shuffle(positions)
-    for index, position in enumerate(positions):
-        sequence[index][0] = position
-    return sequence
+
+    new_sequence = [
+        (position, image) for position, image in zip(positions, sequence.values())
+    ]
+
+    return new_sequence
