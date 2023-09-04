@@ -4,7 +4,7 @@
 from math import sqrt
 from operator import itemgetter
 from random import shuffle
-from typing import Callable, Generator
+from collections.abc import Callable, Generator
 
 from PIL.Image import Image, new, open
 from PIL.ImageDraw import Draw
