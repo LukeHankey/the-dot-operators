@@ -9,8 +9,11 @@ from client import GameClient
 
 if __name__ == "__main__":
     path = join(split(__file__)[0], "images")
-    filename = choice([  # get a random image on each game run
-        f"images/{filename}" for filename in listdir(path)])
+    filename = choice(
+        [  # get a random image on each game run
+            f"images/{filename}" for filename in listdir(path)
+        ]
+    )
     filename = join(split(__file__)[0], filename)
     game = GameClient(filename, 16)
     game.mainloop()
