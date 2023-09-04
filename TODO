@@ -1,0 +1,27 @@
+# Client
+ - Menu Screen
+ 	- game selection
+ 	- settings
+ 	- score board
+ 	- splash screen
+ - Game Screen
+ 	- Jigsaw Surface (consider aperiodic tiling compatitbilty)
+ 		- tile snapping handling
+ 		- tile overlapping handling
+ 		- tile border handling
+ 	- Scoreboard Surface
+ 		- timer/clock countdown
+ 		- piece counter.. (hamming distance to answer)
+
+# The Secret Code
+My Suggestion is that we start by masking the tiled image with the secret
+text/code and then with the remaining tiles shuffle those.  the correct jigsaw
+will state the code with its tiling when complete.
+
+# Common
+ - periodic tiling's (squares, triangles, hexagons)
+ - aperidic tiling
+ - image api handler, (get all those lovely pictures from pexels?)
+
+# Server?
+ - for multiplayer

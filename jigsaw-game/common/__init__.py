@@ -1,16 +1,16 @@
 #!/usr/bin/venv python3
 """Core Image Manipulation functionality"""
 
+from collections.abc import Callable, Generator
 from math import sqrt
 from operator import itemgetter
 from random import shuffle
-from typing import Callable, Generator
 
 from PIL.Image import Image, new, open
 from PIL.ImageDraw import Draw
 
 
-def triangle_tiles(image: Image, width: int, height: int) -> Generator[[[int, int], Image], None, None]:
+def trianglular_tiles(image: Image, width: int, height: int) -> Generator[[[int, int], Image], None, None]:
     """Tile generator with the inner most loop calling the specific
 
     shape for tiling applies the mask of the shape then continues
@@ -41,18 +41,28 @@ def square_tiles(image: Image, width: int, height: int) -> Generator[[[int, int]
             yield (x, y), image.crop((x, y, x + width, y + height))
 
 
-def regular_tiles(
-        filename: str,
-        num_tiles: int,
-        tile_generator: Callable[[Image, int, int], Generator[[[int, int], Image], None, None]]) -> list:
-    """Opens image file and splits it into tiles and shuffles them"""
+def get_image(filename: str, max_dimensions: tuple[int, int], num_of_tiles: int) -> Image:
+    """This could be extended to by addeding filters, and from other sources"""
     with open(filename) as image:
-        image.thumbnail((720, 480))
-        sequence = list()
-        width = int(image.width // sqrt(num_tiles))
-        height = int(image.height // sqrt(num_tiles))
-        for num, (pos, tile) in enumerate(tile_generator(image, width, height)):
-            sequence.append([pos, tile])
+        image.thumbnail(max_dimensions)
+        num_of_tiles = int(sqrt(num_of_tiles))
+        width = image.width // num_of_tiles
+        height = image.height // num_of_tiles
+        image = image.crop((0, 0, num_of_tiles*width, num_of_tiles*height))
+    return image
+
+
+def regular(
+        tile_generator: Callable[[Image, int, int], Generator[[[int, int], Image], None, None]],
+        image: Image,
+        num_of_tiles: int) -> list:
+    """Opens image file and splits it into tiles and shuffles them"""
+    sequence = list()
+    num_of_tiles = int(sqrt(num_of_tiles))
+    width = image.width // num_of_tiles
+    height = image.height // num_of_tiles
+    for num, (pos, tile) in enumerate(tile_generator(image, width, height)):
+        sequence.append([pos, tile])
     # extract out the positions to shuffle then add back in
     positions = list(map(itemgetter(0), sequence))
     shuffle(positions)
@@ -67,7 +77,7 @@ if __name__ == "__main__":
     from random import choice
     path = join(split(__file__)[0], "images")
     filename = choice([  # get a random image on each game run
-        f"images/{filename}" for filename in listdir(path)])
+        f"../images/{filename}" for filename in listdir(path)])
     filename = join(split(__file__)[0], filename)
-    for _, tile in regular_tiles(filename, 4, triangle_tiles):
+    for _, tile in regular(square_tiles, filename, 4):
         tile.show()
