@@ -1,10 +1,10 @@
 #!/usr/bin/venv python3
 """Core Image Manipulation functionality"""
 
+from collections.abc import Callable, Generator
 from math import sqrt
 from operator import itemgetter
 from random import shuffle
-from collections.abc import Callable, Generator
 
 from PIL.Image import Image, new, open
 from PIL.ImageDraw import Draw
