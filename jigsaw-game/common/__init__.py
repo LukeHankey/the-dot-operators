@@ -12,7 +12,7 @@ from PIL.ImageDraw import Draw
 
 def trianglular_tiles(
     image: Image, width: int, height: int
-) -> Generator[[[int, int], Image], None, None]:
+) -> Generator[tuple[tuple[int, int], Image], None, None]:
     """Tile generator with the inner most loop calling the specific
 
     shape for tiling applies the mask of the shape then continues
@@ -35,7 +35,7 @@ def trianglular_tiles(
 
 def square_tiles(
     image: Image, width: int, height: int
-) -> Generator[[[int, int], Image], None, None]:
+) -> Generator[tuple[tuple[int, int], Image], None, None]:
     """Tile generator with the inner most loop calling the specific
 
     shape for tiling applies the mask of the shape then continues
@@ -60,7 +60,7 @@ def get_image(
 
 def regular(
     tile_generator: Callable[
-        [Image, int, int], Generator[[[int, int], Image], None, None]
+        [Image, int, int], Generator[tuple[tuple[int, int], Image], None, None]
     ],
     image: Image,
     num_of_tiles: int,
@@ -78,19 +78,3 @@ def regular(
     for index, position in enumerate(positions):
         sequence[index][0] = position
     return sequence
-
-
-if __name__ == "__main__":
-    from os import listdir
-    from os.path import join, split
-    from random import choice
-
-    path = join(split(__file__)[0], "images")
-    filename = choice(
-        [  # get a random image on each game run
-            f"../images/{filename}" for filename in listdir(path)
-        ]
-    )
-    filename = join(split(__file__)[0], filename)
-    for _, tile in regular(square_tiles, filename, 4):
-        tile.show()

@@ -36,7 +36,7 @@ class Tile(sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.active = False
-        self.drag_offset = None
+        self.drag_offset: tuple[int, int]
 
     def activate(self, pointer: tuple[int, int]):
         """Could add tile highlighting and other affects"""
