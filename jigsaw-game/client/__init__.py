@@ -3,7 +3,8 @@
 
 from sys import exit
 
-from common import get_image, regular, square_tiles
+from common import get_image
+from common.tessellation import square_tiler, tile_splitter
 from pygame import Rect, Surface, display, event, image, init, mouse, quit, sprite
 from pygame.locals import (
     MOUSEBUTTONDOWN,
@@ -122,7 +123,7 @@ class GameClient:
         self.tiles = sprite.Group()
         image = get_image(filename, SCREEN_DIMENSIONS, num_of_tiles)
         self.jigsaw = JigSaw(self.screen, image.size)
-        for pos, image_tile in regular(square_tiles, image, num_of_tiles):
+        for pos, image_tile in tile_splitter(square_tiler, image, num_of_tiles):
             self.tiles.add(Tile(pos, image_tile))
 
     def mainloop(self):
