@@ -8,7 +8,7 @@ NUM_OF_TILES = 3200
 FONT_NAME = "DejaVuSans-ExtraLight.ttf"
 
 
-def insert_newline_in_centered_space(string: str):
+def insert_newline_in_centered_space(string: str) -> str:
     """This is so lines can wrap for multiline output"""
     split_string: list[str] = list(string)
     left_offset = len(split_string) // 2
@@ -25,7 +25,9 @@ def insert_newline_in_centered_space(string: str):
     return "".join(split_string)
 
 
-def fitted_text_mask(image, text, text_color=(0, 0, 0)):
+def fitted_text_mask(
+    image: Image.Image, text: str, text_color: tuple[int, int, int] = (0, 0, 0)
+) -> Image.Image:
     """Write text to the image that fits to the edges"""
     image = deepcopy(image)  # deepcopy to prevent modifying the original
     font_size = 1
@@ -66,8 +68,8 @@ def fitted_text_mask(image, text, text_color=(0, 0, 0)):
 
 
 def filter_tiles(
-    text_tiles: list[tuple[int, Image.Image]],
-    normal_tiles: list[tuple[int, Image.Image]],
+    text_tiles: list[tuple[tuple[int, int], Image.Image]],
+    normal_tiles: list[tuple[tuple[int, int], Image.Image]],
 ):
     """Generator to find matching tiles
 
