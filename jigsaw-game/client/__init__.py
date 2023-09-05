@@ -74,6 +74,7 @@ class Tile(sprite.Sprite):
             case 0:
                 self.rect.midtop = (self.rect.midtop[0], v_coord)
 
+
 class MenuClient:
     """Dummy Object for now could be placed into seperate module"""
 
@@ -136,7 +137,7 @@ class GameClient:
                         # [::-1] reverse list check is downwards in z depth
                         for tile in self.tiles.sprites()[::-1]:
                             if tile.rect.collidepoint(
-                                self.jigsaw.translate(mouse.get_pos())
+                                    self.jigsaw.translate(mouse.get_pos())
                             ):
                                 # reorder to the top before drag
                                 self.tiles.remove(tile)
