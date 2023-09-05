@@ -2,16 +2,23 @@
  - Menu Screen
  	- game selection
  	- settings
- 	- score board
+ 	- title/score board
  	- splash screen
  - Game Screen
  	- Jigsaw Surface (consider aperiodic tiling compatitbilty)
  		- tile snapping handling
- 		- tile overlapping handling
+ 		- tile overlap handling
  		- tile border handling
+ 		- tile animation
+ 		- solved tile parenting/grouping (for high piece count)
+ 	- Empty Jigsaw space?
  	- Scoreboard Surface
  		- timer/clock countdown
  		- piece counter.. (hamming distance to answer)
+ 	- End Game Surface
+ 		- win
+ 		- lose
+ 		- title/name entry
 
 # The Secret Code
 My Suggestion is that we start by masking the tiled image with the secret
@@ -19,8 +26,12 @@ text/code and then with the remaining tiles shuffle those.  the correct jigsaw
 will state the code with its tiling when complete.
 
 # Common
- - periodic tiling's (squares, triangles, hexagons)
- - aperidic tiling
+ - Tile object that holds multiple images for different in game "states"
+ - square tiles (done)
+ - irregular triangle tiles
+ 	- hexagon
+ 	- polygons
+ 	- einstien tile (discovered in March 2023)
  - image api handler, (get all those lovely pictures from pexels?)
 
 # Server?
