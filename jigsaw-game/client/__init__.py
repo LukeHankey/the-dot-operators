@@ -204,8 +204,8 @@ class GameClient:
                                             - tile.rect.midright[0]
                                         )
                                         if (
-                                                left_snap < right_snap
-                                                and left_snap <= h_snapping_distance
+                                            left_snap < right_snap
+                                            and left_snap <= h_snapping_distance
                                         ):
                                             # snaps the tile's left side to the right side of the check_tile
                                             tile.snap_h(0, check_tile.rect.midright[0])
@@ -225,8 +225,8 @@ class GameClient:
                                             - tile.rect.midbottom[1]
                                         )
                                         if (
-                                                top_snap < bottom_snap
-                                                and top_snap <= v_snapping_distance
+                                            top_snap < bottom_snap
+                                            and top_snap <= v_snapping_distance
                                         ):
                                             # snaps the tile's top side to the bottom side of the check_tile
                                             tile.snap_v(0, check_tile.rect.midbottom[1])
