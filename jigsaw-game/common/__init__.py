@@ -25,7 +25,7 @@ def trianglular_tiles(
             tile = image.crop((x, y, x + width, y + height))
             tile.putalpha(mask)
             yield (x, y), tile  # first yield for half the triangle
-            mask = new('L', (width, height), 0)
+            mask = new("L", (width, height), 0)
             draw = Draw(mask)
             draw.polygon([(0, 0), (width, 0), (width, height)], fill=255)
             tile = image.crop((x, y, x + width, y + height))

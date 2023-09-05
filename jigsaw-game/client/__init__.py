@@ -137,7 +137,7 @@ class GameClient:
                         # [::-1] reverse list check is downwards in z depth
                         for tile in self.tiles.sprites()[::-1]:
                             if tile.rect.collidepoint(
-                                    self.jigsaw.translate(mouse.get_pos())
+                                self.jigsaw.translate(mouse.get_pos())
                             ):
                                 # reorder to the top before drag
                                 self.tiles.remove(tile)
@@ -156,22 +156,36 @@ class GameClient:
 
                             left_snap = abs(self.jigsaw.size[0] - tile.rect.width)
                             right_snap = abs(self.jigsaw.size[0] - tile.rect.width)
-                            if left_snap < right_snap and left_snap <= h_snapping_distance or tile.rect.midleft[0] < 0:
+                            if (
+                                left_snap < right_snap
+                                and left_snap <= h_snapping_distance
+                                or tile.rect.midleft[0] < 0
+                            ):
                                 # snaps the tile's left side to the left game border
                                 tile.snap_h(0, 0)
                                 h_snapped = True
-                            elif right_snap <= h_snapping_distance or tile.rect.midright[0] > self.jigsaw.size[0]:
+                            elif (
+                                right_snap <= h_snapping_distance
+                                or tile.rect.midright[0] > self.jigsaw.size[0]
+                            ):
                                 # snaps the tile's right side to the right game border
                                 tile.snap_h(1, self.jigsaw.size[0])
                                 h_snapped = True
 
                             top_snap = abs(self.jigsaw.size[1] - tile.rect.height)
                             bottom_snap = abs(self.jigsaw.size[1] - tile.rect.height)
-                            if top_snap < bottom_snap and top_snap <= v_snapping_distance or tile.rect.midtop[1] < 0:
+                            if (
+                                top_snap < bottom_snap
+                                and top_snap <= v_snapping_distance
+                                or tile.rect.midtop[1] < 0
+                            ):
                                 # snaps the tile's top side to the top game border
                                 tile.snap_v(0, 0)
                                 v_snapped = True
-                            elif bottom_snap <= v_snapping_distance or tile.rect.midbottom[1] > self.jigsaw.size[1]:
+                            elif (
+                                bottom_snap <= v_snapping_distance
+                                or tile.rect.midbottom[1] > self.jigsaw.size[1]
+                            ):
                                 # snaps the tile's bottom side to the bottom game border
                                 tile.snap_v(1, self.jigsaw.size[1])
                                 v_snapped = True
@@ -181,9 +195,18 @@ class GameClient:
                                     break
                                 if check_tile != tile:
                                     if not h_snapped:
-                                        left_snap = abs(check_tile.rect.midright[0] - tile.rect.midleft[0])
-                                        right_snap = abs(check_tile.rect.midleft[0] - tile.rect.midright[0])
-                                        if left_snap < right_snap and left_snap <= h_snapping_distance:
+                                        left_snap = abs(
+                                            check_tile.rect.midright[0]
+                                            - tile.rect.midleft[0]
+                                        )
+                                        right_snap = abs(
+                                            check_tile.rect.midleft[0]
+                                            - tile.rect.midright[0]
+                                        )
+                                        if (
+                                                left_snap < right_snap
+                                                and left_snap <= h_snapping_distance
+                                        ):
                                             # snaps the tile's left side to the right side of the check_tile
                                             tile.snap_h(0, check_tile.rect.midright[0])
                                             h_snapped = True
@@ -193,9 +216,18 @@ class GameClient:
                                             h_snapped = True
 
                                     if not v_snapped:
-                                        top_snap = abs(check_tile.rect.midbottom[1] - tile.rect.midtop[1])
-                                        bottom_snap = abs(check_tile.rect.midtop[1] - tile.rect.midbottom[1])
-                                        if top_snap < bottom_snap and top_snap <= v_snapping_distance:
+                                        top_snap = abs(
+                                            check_tile.rect.midbottom[1]
+                                            - tile.rect.midtop[1]
+                                        )
+                                        bottom_snap = abs(
+                                            check_tile.rect.midtop[1]
+                                            - tile.rect.midbottom[1]
+                                        )
+                                        if (
+                                                top_snap < bottom_snap
+                                                and top_snap <= v_snapping_distance
+                                        ):
                                             # snaps the tile's top side to the bottom side of the check_tile
                                             tile.snap_v(0, check_tile.rect.midbottom[1])
                                             v_snapped = True
