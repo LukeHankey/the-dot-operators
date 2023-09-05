@@ -52,6 +52,21 @@ class Tile(sprite.Sprite):
             pointer[0] - self.drag_offset[0],
             pointer[1] - self.drag_offset[1])
 
+    def snap_h(self, side: int, h_coord: int):
+        """Snap to position"""
+        match side:
+            case 0:
+                self.rect.midleft = (h_coord, self.rect.midleft[1])
+            case 1:
+                self.rect.midright = (h_coord, self.rect.midright[1])
+
+    def snap_v(self, side: int, v_coord: int):
+        """Snap to position"""
+        match side:
+            case 1:
+                self.rect.midbottom = (self.rect.midbottom[0], v_coord)
+            case 0:
+                self.rect.midtop = (self.rect.midtop[0], v_coord)
 
 class MenuClient:
     """Dummy Object for now could be placed into seperate module"""
@@ -122,7 +137,34 @@ class GameClient:
                                 break
                 if e.type == MOUSEBUTTONUP:
                     for tile in self.tiles.sprites()[::-1]:
-                        tile.active = False
+                        if tile.active:
+                            v_snapped = False
+                            h_snapped = False
+                            for check_tile in self.tiles.sprites()[::-1]:
+                                if check_tile != tile:
+                                    if not h_snapped:
+                                        h_snapping_distance = tile.rect.width / 100 * 15
+                                        left_snap = abs(check_tile.rect.midright[0] - tile.rect.midleft[0])
+                                        right_snap = abs(check_tile.rect.midleft[0] - tile.rect.midright[0])
+                                        if left_snap < right_snap and left_snap <= h_snapping_distance:
+                                            tile.snap_h(0, check_tile.rect.midright[0])
+                                            h_snapped = True
+                                        elif right_snap <= h_snapping_distance:
+                                            tile.snap_h(1, check_tile.rect.midleft[0])
+                                            h_snapped = True
+
+                                    if not v_snapped:
+                                        v_snapping_distance = tile.rect.height / 100 * 15
+                                        top_snap = abs(check_tile.rect.midbottom[1] - tile.rect.midtop[1])
+                                        bottom_snap = abs(check_tile.rect.midtop[1] - tile.rect.midbottom[1])
+                                        if top_snap < bottom_snap and top_snap <= v_snapping_distance:
+                                            tile.snap_v(0, check_tile.rect.midbottom[1])
+                                            v_snapped = True
+                                        elif bottom_snap <= v_snapping_distance:
+                                            tile.snap_v(1, check_tile.rect.midtop[1])
+                                            v_snapped = True
+                        tile.deactivate()
+
                 if e.type == MOUSEMOTION:
                     for tile in self.tiles.sprites()[::-1]:
                         if tile.active:

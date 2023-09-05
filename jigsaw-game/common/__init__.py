@@ -22,7 +22,7 @@ def trianglular_tiles(image: Image, width: int, height: int) -> Generator[[[int,
             draw.polygon([(0, 0), (0, height), (width, height)], fill=255)
             tile = image.crop((x, y, x + width, y + height))
             tile.putalpha(mask)
-            yield (x, y), tile  # first yeild for half the triangle
+            yield (x, y), tile  # first yield for half the triangle
             mask = new('L', (width, height), 0)
             draw = Draw(mask)
             draw.polygon([(0, 0), (width, 0), (width, height)], fill=255)
@@ -75,9 +75,9 @@ if __name__ == "__main__":
     from os import listdir
     from os.path import join, split
     from random import choice
-    path = join(split(__file__)[0], "images")
+    path = join(split(__file__)[0], "../images")
     filename = choice([  # get a random image on each game run
         f"../images/{filename}" for filename in listdir(path)])
     filename = join(split(__file__)[0], filename)
-    for _, tile in regular(square_tiles, filename, 4):
+    for _, tile in regular(square_tiles, open(filename), 4):
         tile.show()
