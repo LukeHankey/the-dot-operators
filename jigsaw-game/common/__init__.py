@@ -72,9 +72,11 @@ def regular(
     height = image.height // num_of_tiles
     for num, (pos, tile) in enumerate(tile_generator(image, width, height)):
         sequence.append([pos, tile])
-    # extract out the positions to shuffle then add back in
-    positions = list(map(itemgetter(0), sequence))
-    shuffle(positions)
-    for index, position in enumerate(positions):
-        sequence[index][0] = position
     return sequence
+
+
+def tile_scrambler(tiles: list[tuple[tuple[int, int], Image]]):
+    """Extract out the positions to shuffle then add back in"""
+    positions = list(map(itemgetter(0), tiles))
+    shuffle(positions)
+    return [(pos, tile) for pos, (_, tile) in zip(positions, tiles)]

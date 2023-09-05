@@ -1,10 +1,11 @@
+#!/usr/bin/venv python3
+"""Our way to match the theme 'secret codes'"""
 from copy import deepcopy
 
-from PIL import ImageChops, ImageDraw, ImageFont
+from PIL import Image, ImageChops, ImageDraw, ImageFont
 
 NUM_OF_TILES = 3200
-
-FONT_NAME = "/usr/share/fonts/truetype/dejavu/DejaVuSans-ExtraLight.ttf"
+FONT_NAME = "DejaVuSans-ExtraLight.ttf"
 
 
 def insert_newline_in_centered_space(string: str):
@@ -64,7 +65,10 @@ def fitted_text_mask(image, text, text_color=(0, 0, 0)):
     return image
 
 
-def filter_tiles(text_tiles, normal_tiles):
+def filter_tiles(
+    text_tiles: list[tuple[int, Image.Image]],
+    normal_tiles: list[tuple[int, Image.Image]],
+):
     """Generator to find matching tiles
 
     If tiles do not match they are set to None, to tell the GUI

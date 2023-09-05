@@ -4,7 +4,7 @@ from operator import itemgetter
 from os import listdir
 from os.path import join, split
 
-from common import get_image, regular, square_tiles
+from common import get_image, regular, square_tiles, tile_scrambler
 from common.secret_codes import NUM_OF_TILES, filter_tiles, fitted_text_mask
 from PIL import Image
 
@@ -16,9 +16,11 @@ for filename in listdir(join(split(__file__)[0], "images")):
     text = fitted_text_mask(image, "Hello, World!")
 
     # get generator from tiled images
-    filtered_tiles = filter_tiles(
-        regular(square_tiles, text, NUM_OF_TILES),
-        regular(square_tiles, image, NUM_OF_TILES),
+    filtered_tiles = list(
+        filter_tiles(
+            regular(square_tiles, text, NUM_OF_TILES),
+            regular(square_tiles, image, NUM_OF_TILES),
+        )
     )
 
     # now lets paste it all together and show the user
@@ -26,5 +28,10 @@ for filename in listdir(join(split(__file__)[0], "images")):
     for pos, tile in filter(itemgetter(1), filtered_tiles):
         bbox = (pos[0], pos[1], pos[0] + tile.width, pos[1] + tile.height)
         final.paste(tile, bbox)
+    final.show()
 
+    # show scrambled
+    for pos, tile in filter(itemgetter(1), tile_scrambler(filtered_tiles)):
+        bbox = (pos[0], pos[1], pos[0] + tile.width, pos[1] + tile.height)
+        final.paste(tile, bbox)
     final.show()
