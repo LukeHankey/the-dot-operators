@@ -1,12 +1,7 @@
-#!/usr/bin/venv python3
-"""This is all the GUI magic"""
-
 from sys import exit
 from typing import NoReturn
 
-from common import get_image, regular, square_tiles
-from PIL.Image import Image
-from pygame import Rect, Surface, display, event, image, init, mouse, quit, sprite
+from pygame import Rect, Surface, display, event, init, mouse, quit, sprite
 from pygame.locals import (
     MOUSEBUTTONDOWN,
     MOUSEBUTTONUP,
@@ -16,65 +11,13 @@ from pygame.locals import (
     VIDEORESIZE,
 )
 
+from ..utils import get_image, regular
+from .tiles import Tile, square_tiles
+
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 SCREEN_DIMENSIONS = (SCREEN_WIDTH, SCREEN_HEIGHT)
 WHITE = (255, 255, 255)
 BLACK = (000, 000, 000)
-
-
-class Tile(sprite.Sprite):
-    """Tile which is a cropped image at a specifc point.
-
-    dragging support is built in TODO; add support for alpha, better
-    bounding box methods
-    """
-
-    def __init__(self, pos: tuple[int, int], cropped_image: Image) -> None:
-        """Basic init method that takes pillow image into pygame image"""
-        super().__init__()
-        self.image = image.fromstring(
-            cropped_image.tobytes(), cropped_image.size, cropped_image.mode
-        )
-        self.rect = self.image.get_rect()
-        self.rect.topleft = pos
-        self.active = False
-        self.drag_offset: tuple[int, int]
-
-    def activate(self, pointer: tuple[int, int]) -> None:
-        """Could add tile highlighting and other affects"""
-        self.active = True
-        self.drag_offset = (
-            pointer[0] - self.rect.topleft[0],
-            pointer[1] - self.rect.topleft[1],
-        )
-
-    def deactivate(self) -> None:
-        """Remove anything `activate` added"""
-        self.active = False
-        self.drag_offset = (0, 0)  # so move can be used more directly
-
-    def move(self, pointer: tuple[int, int]) -> None:
-        """Move tile to pointer could be a mouse pointer or anything"""
-        self.rect.topleft = (
-            pointer[0] - self.drag_offset[0],
-            pointer[1] - self.drag_offset[1],
-        )
-
-    def snap_h(self, side: int, h_coord: int) -> None:
-        """Snaps the tile to other tiles/image borders on the horizontal axis"""
-        match side:
-            case 0:
-                self.rect.midleft = (h_coord, self.rect.midleft[1])
-            case 1:
-                self.rect.midright = (h_coord, self.rect.midright[1])
-
-    def snap_v(self, side: int, v_coord: int) -> None:
-        """Snaps the tile to other tiles/image borders on the vertical axis"""
-        match side:
-            case 1:
-                self.rect.midbottom = (self.rect.midbottom[0], v_coord)
-            case 0:
-                self.rect.midtop = (self.rect.midtop[0], v_coord)
 
 
 class MenuClient:
@@ -84,7 +27,7 @@ class MenuClient:
 class JigSaw(Surface):
     """This is the Surface that the user interacts with the puzzle"""
 
-    def __init__(self, screen: Surface, size: tuple[int, int]) -> None:  # type: ignore
+    def __init__(self, screen: Surface, size: tuple[int, int]) -> None:
         """Set Jigsaw position"""
         super().__init__(size)
         self.screen = screen
@@ -122,7 +65,7 @@ class GameClient:
 
         self.screen = display.set_mode(SCREEN_DIMENSIONS, RESIZABLE)
         self.tiles = sprite.Group()
-        self.jigsaw = JigSaw(self.screen, image.size)  # type: ignore
+        self.jigsaw = JigSaw(self.screen, image.size)
 
         for pos, image_tile in regular(square_tiles, image, num_of_tiles):
             self.tiles.add(Tile(pos, image_tile))
@@ -140,7 +83,7 @@ class GameClient:
                     if self.jigsaw.rect.collidepoint(mouse_pos):
                         # [::-1] reverse list check is downwards in z depth
                         for tile in self.tiles.sprites()[::-1]:
-                            if tile.rect.collidepoint(self.jigsaw.translate(mouse_pos)):  # type: ignore
+                            if tile.rect.collidepoint(self.jigsaw.translate(mouse_pos)):
                                 # reorder to the top before drag
                                 self.tiles.remove(tile)
                                 self.tiles.add(tile)  # reorder to top
