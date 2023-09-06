@@ -59,21 +59,17 @@ class Tile(sprite.Sprite):
             pointer[1] - self.drag_offset[1],
         )
 
-    def snap_h(self, side: int, h_coord: int):
+    def snap(self, side: str, coord: int, axis: int):
         """Snaps the tile to other tiles/image borders on the horizontal axis"""
-        match side:
-            case 0:
-                self.rect.midleft = (h_coord, self.rect.midleft[1])
-            case 1:
-                self.rect.midright = (h_coord, self.rect.midright[1])
+        if side == 'topleft':
+            tmp_coord = list(self.rect.topleft)
+            tmp_coord[axis] = coord
+            self.rect.topleft = tuple(tmp_coord)
+        else:
+            tmp_coord = list(self.rect.bottomright)
+            tmp_coord[axis] = coord
+            self.rect.bottomright = tuple(tmp_coord)
 
-    def snap_v(self, side: int, v_coord: int):
-        """Snaps the tile to other tiles/image borders on the vertical axis"""
-        match side:
-            case 1:
-                self.rect.midbottom = (self.rect.midbottom[0], v_coord)
-            case 0:
-                self.rect.midtop = (self.rect.midtop[0], v_coord)
 
 
 class MenuClient:
@@ -125,6 +121,54 @@ class GameClient:
         self.jigsaw = JigSaw(self.screen, image.size)
         for pos, image_tile in tile_splitter(square_tiler, image, num_of_tiles):
             self.tiles.add(Tile(pos, image_tile))
+        self.sides_axes = {
+            'top': 1,
+            'bottom': 1,
+            'left': 0,
+            'right': 0,
+        }
+
+    def check_snap(self, side: str, tile: Tile, check_tile: Tile | JigSaw):
+        """Checks if the tile can be snapped to the check_tile or the game border and snaps it if it can"""
+        side_axis = self.sides_axes[side]
+        # snapping distance is 15% of the tile's either width or height
+        snapping_distance = tile.rect.size[side_axis] / 100 * 15
+
+        # border snapping
+        if type(check_tile) == JigSaw:
+            if (
+                tile.rect.topleft[side_axis] < snapping_distance
+            ):
+                # snaps the tile's left side to the left game border
+                tile.snap('topleft', 0, side_axis)
+                return True
+            elif (
+                    tile.rect.bottomright[side_axis] > (self.jigsaw.size[side_axis] - snapping_distance)
+            ):
+                # snaps the tile's right side to the right game border
+                tile.snap('bottomright', self.jigsaw.size[side_axis], side_axis)
+                return True
+        # tile snapping
+        else:
+            topleft_snap = abs(
+                check_tile.rect.bottomright[side_axis]
+                - tile.rect.topleft[side_axis]
+            )
+            bottomright_snap = abs(
+                check_tile.rect.topleft[side_axis]
+                - tile.rect.bottomright[side_axis]
+            )
+            if (
+                topleft_snap < bottomright_snap
+                and topleft_snap <= snapping_distance
+            ):
+                # snaps the tile's left side to the right side of the check_tile
+                tile.snap('topleft', check_tile.rect.bottomright[side_axis], side_axis)
+                return True
+            elif bottomright_snap <= snapping_distance:
+                # snaps the tile's right side to the left side of the check_tile
+                tile.snap('bottomright', check_tile.rect.topleft[side_axis], side_axis)
+                return True
 
     def mainloop(self):
         """The main game loop that currently looks for mouse and quit events"""
@@ -148,94 +192,41 @@ class GameClient:
                 if e.type == MOUSEBUTTONUP:
                     for tile in self.tiles.sprites()[::-1]:
                         if tile.active:
-                            v_snapped = False
-                            h_snapped = False
-                            # the max distance from the check_tile to snap (15% of the tile's width)
-                            h_snapping_distance = tile.rect.width / 100 * 15
-                            # the max distance from the check_tile to snap (15% of the tile's height)
-                            v_snapping_distance = tile.rect.height / 100 * 15
-
-                            left_snap = abs(self.jigsaw.size[0] - tile.rect.width)
-                            right_snap = abs(self.jigsaw.size[0] - tile.rect.width)
-                            if (
-                                left_snap < right_snap
-                                and left_snap <= h_snapping_distance
-                                or tile.rect.midleft[0] < 0
-                            ):
-                                # snaps the tile's left side to the left game border
-                                tile.snap_h(0, 0)
-                                h_snapped = True
-                            elif (
-                                right_snap <= h_snapping_distance
-                                or tile.rect.midright[0] > self.jigsaw.size[0]
-                            ):
-                                # snaps the tile's right side to the right game border
-                                tile.snap_h(1, self.jigsaw.size[0])
-                                h_snapped = True
-
-                            top_snap = abs(self.jigsaw.size[1] - tile.rect.height)
-                            bottom_snap = abs(self.jigsaw.size[1] - tile.rect.height)
-                            if (
-                                top_snap < bottom_snap
-                                and top_snap <= v_snapping_distance
-                                or tile.rect.midtop[1] < 0
-                            ):
-                                # snaps the tile's top side to the top game border
-                                tile.snap_v(0, 0)
-                                v_snapped = True
-                            elif (
-                                bottom_snap <= v_snapping_distance
-                                or tile.rect.midbottom[1] > self.jigsaw.size[1]
-                            ):
-                                # snaps the tile's bottom side to the bottom game border
-                                tile.snap_v(1, self.jigsaw.size[1])
-                                v_snapped = True
+                            h_snapped = self.check_snap(
+                                'left', tile, self.jigsaw
+                            )
+                            if not h_snapped:
+                                h_snapped = self.check_snap(
+                                    'right', tile, self.jigsaw
+                                )
+                            v_snapped = self.check_snap(
+                                'top', tile, self.jigsaw
+                            )
+                            if not v_snapped:
+                                v_snapped = self.check_snap(
+                                    'bottom', tile, self.jigsaw
+                                )
                             for check_tile in self.tiles.sprites()[::-1]:
                                 if v_snapped and h_snapped:
                                     # if the tile has been snapped on the 2 axis, no need to check the other tiles
                                     break
                                 if check_tile != tile:
                                     if not h_snapped:
-                                        left_snap = abs(
-                                            check_tile.rect.midright[0]
-                                            - tile.rect.midleft[0]
+                                        h_snapped = self.check_snap(
+                                            'left', tile, check_tile
                                         )
-                                        right_snap = abs(
-                                            check_tile.rect.midleft[0]
-                                            - tile.rect.midright[0]
-                                        )
-                                        if (
-                                            left_snap < right_snap
-                                            and left_snap <= h_snapping_distance
-                                        ):
-                                            # snaps the tile's left side to the right side of the check_tile
-                                            tile.snap_h(0, check_tile.rect.midright[0])
-                                            h_snapped = True
-                                        elif right_snap <= h_snapping_distance:
-                                            # snaps the tile's right side to the left side of the check_tile
-                                            tile.snap_h(1, check_tile.rect.midleft[0])
-                                            h_snapped = True
-
+                                        if not h_snapped:
+                                            h_snapped = self.check_snap(
+                                                'right', tile, check_tile
+                                            )
                                     if not v_snapped:
-                                        top_snap = abs(
-                                            check_tile.rect.midbottom[1]
-                                            - tile.rect.midtop[1]
+                                        v_snapped = self.check_snap(
+                                            'top', tile, check_tile
                                         )
-                                        bottom_snap = abs(
-                                            check_tile.rect.midtop[1]
-                                            - tile.rect.midbottom[1]
-                                        )
-                                        if (
-                                            top_snap < bottom_snap
-                                            and top_snap <= v_snapping_distance
-                                        ):
-                                            # snaps the tile's top side to the bottom side of the check_tile
-                                            tile.snap_v(0, check_tile.rect.midbottom[1])
-                                            v_snapped = True
-                                        elif bottom_snap <= v_snapping_distance:
-                                            # snaps the tile's bottom side to the top side of the check_tile
-                                            tile.snap_v(1, check_tile.rect.midtop[1])
-                                            v_snapped = True
+                                        if not v_snapped:
+                                            v_snapped = self.check_snap(
+                                                'bottom', tile, check_tile
+                                            )
                         tile.deactivate()
                 if e.type == MOUSEMOTION:
                     for tile in self.tiles.sprites()[::-1]:
