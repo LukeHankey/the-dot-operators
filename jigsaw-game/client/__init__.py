@@ -61,7 +61,7 @@ class Tile(sprite.Sprite):
 
     def snap(self, side: str, coord: int, axis: int):
         """Snaps the tile to other tiles/image borders on the horizontal axis"""
-        if side == 'topleft':
+        if side == "topleft":
             tmp_coord = list(self.rect.topleft)
             tmp_coord[axis] = coord
             self.rect.topleft = tuple(tmp_coord)
@@ -69,7 +69,6 @@ class Tile(sprite.Sprite):
             tmp_coord = list(self.rect.bottomright)
             tmp_coord[axis] = coord
             self.rect.bottomright = tuple(tmp_coord)
-
 
 
 class MenuClient:
@@ -122,10 +121,10 @@ class GameClient:
         for pos, image_tile in tile_splitter(square_tiler, image, num_of_tiles):
             self.tiles.add(Tile(pos, image_tile))
         self.sides_axes = {
-            'top': 1,
-            'bottom': 1,
-            'left': 0,
-            'right': 0,
+            "top": 1,
+            "bottom": 1,
+            "left": 0,
+            "right": 0,
         }
 
     def check_snap(self, side: str, tile: Tile, check_tile: Tile | JigSaw):
@@ -135,39 +134,32 @@ class GameClient:
         snapping_distance = tile.rect.size[side_axis] / 100 * 15
 
         # border snapping
-        if type(check_tile) == JigSaw:
-            if (
-                tile.rect.topleft[side_axis] < snapping_distance
-            ):
+        if isinstance(check_tile, JigSaw):
+            if tile.rect.topleft[side_axis] < snapping_distance:
                 # snaps the tile's left side to the left game border
-                tile.snap('topleft', 0, side_axis)
+                tile.snap("topleft", 0, side_axis)
                 return True
-            elif (
-                    tile.rect.bottomright[side_axis] > (self.jigsaw.size[side_axis] - snapping_distance)
+            elif tile.rect.bottomright[side_axis] > (
+                self.jigsaw.size[side_axis] - snapping_distance
             ):
                 # snaps the tile's right side to the right game border
-                tile.snap('bottomright', self.jigsaw.size[side_axis], side_axis)
+                tile.snap("bottomright", self.jigsaw.size[side_axis], side_axis)
                 return True
         # tile snapping
         else:
             topleft_snap = abs(
-                check_tile.rect.bottomright[side_axis]
-                - tile.rect.topleft[side_axis]
+                check_tile.rect.bottomright[side_axis] - tile.rect.topleft[side_axis]
             )
             bottomright_snap = abs(
-                check_tile.rect.topleft[side_axis]
-                - tile.rect.bottomright[side_axis]
+                check_tile.rect.topleft[side_axis] - tile.rect.bottomright[side_axis]
             )
-            if (
-                topleft_snap < bottomright_snap
-                and topleft_snap <= snapping_distance
-            ):
+            if topleft_snap < bottomright_snap and topleft_snap <= snapping_distance:
                 # snaps the tile's left side to the right side of the check_tile
-                tile.snap('topleft', check_tile.rect.bottomright[side_axis], side_axis)
+                tile.snap("topleft", check_tile.rect.bottomright[side_axis], side_axis)
                 return True
             elif bottomright_snap <= snapping_distance:
                 # snaps the tile's right side to the left side of the check_tile
-                tile.snap('bottomright', check_tile.rect.topleft[side_axis], side_axis)
+                tile.snap("bottomright", check_tile.rect.topleft[side_axis], side_axis)
                 return True
 
     def mainloop(self):
@@ -192,20 +184,12 @@ class GameClient:
                 if e.type == MOUSEBUTTONUP:
                     for tile in self.tiles.sprites()[::-1]:
                         if tile.active:
-                            h_snapped = self.check_snap(
-                                'left', tile, self.jigsaw
-                            )
+                            h_snapped = self.check_snap("left", tile, self.jigsaw)
                             if not h_snapped:
-                                h_snapped = self.check_snap(
-                                    'right', tile, self.jigsaw
-                                )
-                            v_snapped = self.check_snap(
-                                'top', tile, self.jigsaw
-                            )
+                                h_snapped = self.check_snap("right", tile, self.jigsaw)
+                            v_snapped = self.check_snap("top", tile, self.jigsaw)
                             if not v_snapped:
-                                v_snapped = self.check_snap(
-                                    'bottom', tile, self.jigsaw
-                                )
+                                v_snapped = self.check_snap("bottom", tile, self.jigsaw)
                             for check_tile in self.tiles.sprites()[::-1]:
                                 if v_snapped and h_snapped:
                                     # if the tile has been snapped on the 2 axis, no need to check the other tiles
@@ -213,19 +197,19 @@ class GameClient:
                                 if check_tile != tile:
                                     if not h_snapped:
                                         h_snapped = self.check_snap(
-                                            'left', tile, check_tile
+                                            "left", tile, check_tile
                                         )
                                         if not h_snapped:
                                             h_snapped = self.check_snap(
-                                                'right', tile, check_tile
+                                                "right", tile, check_tile
                                             )
                                     if not v_snapped:
                                         v_snapped = self.check_snap(
-                                            'top', tile, check_tile
+                                            "top", tile, check_tile
                                         )
                                         if not v_snapped:
                                             v_snapped = self.check_snap(
-                                                'bottom', tile, check_tile
+                                                "bottom", tile, check_tile
                                             )
                         tile.deactivate()
                 if e.type == MOUSEMOTION:
