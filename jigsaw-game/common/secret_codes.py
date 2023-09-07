@@ -3,7 +3,6 @@
 from collections.abc import Generator
 from copy import deepcopy
 
-from PIL import ImageFont
 from PIL.Image import Image
 from PIL.ImageChops import difference
 from PIL.ImageDraw import Draw
@@ -11,6 +10,7 @@ from PIL.ImageFont import truetype
 
 NUM_OF_TILES = 3200
 FONT_NAME = "DejaVuSans-ExtraLight.ttf"
+
 
 def insert_newline_in_centered_space(string: str) -> str:
     """This is so lines can wrap for multiline output"""
