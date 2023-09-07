@@ -3,44 +3,11 @@ from operator import itemgetter
 from random import shuffle
 from typing import Callable
 
-from numpy import (
-    arange,
-    array,
-    column_stack,
-    hstack,
-    meshgrid,
-    ones,
-    random,
-    sqrt,
-    vstack,
-    zeros,
-)
+from numpy import arange, array, column_stack, meshgrid, sqrt
 from PIL.Image import Image, new
 from PIL.ImageChops import composite
 from PIL.ImageDraw import Draw
 from scipy.spatial import Delaunay
-
-
-def random_grid(number_of_points: int):
-    """Not using this"""
-    print("Do NOT USE!!!\n" * 80)
-    num_edge_points = number_of_points // 10
-    x_edge = random.rand(num_edge_points, 1)
-    x_edge_left = zeros(num_edge_points).reshape(-1, 1)
-    x_edge_right = ones(num_edge_points).reshape(-1, 1)
-
-    y_edge = random.rand(num_edge_points, 1)
-    y_edge_top = zeros(num_edge_points).reshape(-1, 1)
-    y_edge_bottom = ones(num_edge_points).reshape(-1, 1)
-    edge_points = vstack(
-        [
-            hstack([x_edge, y_edge_top]),
-            hstack([x_edge, y_edge_bottom]),
-            hstack([x_edge_left, y_edge]),
-            hstack([x_edge_right, y_edge]),
-        ]
-    )
-    return vstack([random.rand(number_of_points, 2), edge_points])
 
 
 def square_grid(width: int, height: int, num_of_tiles: int) -> array:
