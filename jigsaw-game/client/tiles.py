@@ -2,7 +2,7 @@ from pygame import image, sprite
 
 
 class JigSawTiles(sprite.Group):
-    """Inheritance for the addition of Group methods concerinng active tiles"""
+    """Inheritance for the addition of Group methods concerning active tiles"""
 
     def get_active(self):
         """Return the active tile"""
@@ -11,7 +11,7 @@ class JigSawTiles(sprite.Group):
                 return tile
         return False
 
-    def get_inactive(self):
+    def get_inactives(self):
         """Return the inactive tiles"""
         return [tile for tile in self.sprites() if not tile.active]
 
@@ -33,7 +33,7 @@ class Tile(sprite.Sprite):
         self.rect.topleft = pos
         self.active = False
         self.drag_offset: tuple[int, int]
-        self.snapping_rect = (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5)
+        self.snapping_rect = (self.rect.size[0] * 0.15, self.rect.size[1] * 0.15)
 
     def activate(self, pointer: tuple[int, int]):
         """Could add tile highlighting and other affects"""
