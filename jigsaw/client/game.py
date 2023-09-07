@@ -11,8 +11,6 @@ from pygame.locals import (
     VIDEORESIZE,
 )
 
-from ..tessellation import square_tiler, tile_splitter
-from ..utils import get_image
 from .jigsaw import JigSaw
 from .tiles import JigSawTiles, Tile
 
@@ -37,13 +35,10 @@ class GameClient:
         init()
 
         self.screen = display.set_mode(SCREEN_DIMENSIONS, RESIZABLE)
+        self.jigsaw = JigSaw(self.screen, action["image"].size)
         self.tiles = JigSawTiles()
 
-        num_of_tiles = action["num_of_tiles"]
-        image = get_image(action["filename"], SCREEN_DIMENSIONS, num_of_tiles)
-        self.jigsaw = JigSaw(self.screen, image.size)
-
-        for pos, image_tile in tile_splitter(square_tiler, image, num_of_tiles):
+        for pos, image_tile in action["tiles"]:
             self.tiles.add(Tile(pos, action["overlap"], image_tile))
 
     def mainloop(self) -> NoReturn:
