@@ -11,7 +11,7 @@ class JigSawTiles(sprite.Group):
                 return tile
         return False
 
-    def get_inactives(self):
+    def get_inactives(self) -> list[Tile]:
         """Return the inactive tiles"""
         return [tile for tile in self.sprites() if not tile.active]
 
