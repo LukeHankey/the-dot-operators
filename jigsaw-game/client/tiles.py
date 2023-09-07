@@ -18,7 +18,7 @@ class Tile(sprite.Sprite):
         self.rect.topleft = pos
         self.active = False
         self.drag_offset: tuple[int, int]
-        self.snapping_rect = (self.rect.size[0] * 0.15, self.rect.size[1] * 0.15)
+        self.snapping_rect = (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5)
 
     def activate(self, pointer: tuple[int, int]):
         """Could add tile highlighting and other affects"""
