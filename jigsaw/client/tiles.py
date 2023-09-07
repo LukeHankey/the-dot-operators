@@ -11,7 +11,9 @@ class Tile(sprite.Sprite):
     bounding box methods
     """
 
-    def __init__(self, pos: tuple[int, int], overlap, cropped_image: Image) -> None:
+    def __init__(
+        self, pos: tuple[int, int], overlap: float, cropped_image: Image
+    ) -> None:
         """Basic init method that takes pillow image into pygame image"""
         super().__init__()
         self.image = image.fromstring(

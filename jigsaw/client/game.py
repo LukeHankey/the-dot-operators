@@ -1,5 +1,5 @@
 from sys import exit
-from typing import NoReturn
+from typing import Any, NoReturn
 
 from pygame import display, event, init, mouse, quit
 from pygame.locals import (
@@ -27,7 +27,7 @@ BLACK = (000, 000, 000)
 class GameClient:
     """When the puzzle is chosen the game starts here"""
 
-    def __init__(self, action: dict) -> None:
+    def __init__(self, action: dict[str, Any]) -> None:
         """Initialization method
 
         This gets the resized and cropped image then tiles it
@@ -38,7 +38,7 @@ class GameClient:
         self.jigsaw = JigSaw(self.screen, action["image"].size)
         self.tiles = JigSawTiles()
 
-        for pos, image_tile in action["tiles"]:
+        for pos, image_tile in action["tiles"].items():
             self.tiles.add(Tile(pos, action["overlap"], image_tile))
 
     def mainloop(self) -> NoReturn:

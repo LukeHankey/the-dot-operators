@@ -19,19 +19,21 @@ DEFAULT_OVERLAP = 0.25
 MIN_TILE_NUMBER = 16
 DEFAULT_TILE_NUMBER = 36
 
-action = {"num_of_tiles": DEFAULT_TILE_NUMBER}
 path = join(split(__file__)[0], "images")
 filename = choice(
     [  # get a random image on each game run
         f"images/{filename}" for filename in listdir(path)
     ]
 )
-
 filename = join(split(__file__)[0], filename)
-action["image"] = get_image(filename, SCREEN_DIMENSIONS, action["num_of_tiles"])
 
-action["overlap"] = DEFAULT_OVERLAP
-action["tiles"] = tile_splitter(square_tiler, action["image"], action["num_of_tiles"])
+image = get_image(filename, SCREEN_DIMENSIONS, DEFAULT_TILE_NUMBER)
+action = {
+    "num_of_tiles": DEFAULT_TILE_NUMBER,
+    "image": image,
+    "overlap": DEFAULT_OVERLAP,
+    "tiles": tile_splitter(square_tiler, image, DEFAULT_TILE_NUMBER),
+}
 
 game = GameClient(action)
 game.mainloop()
