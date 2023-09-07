@@ -1,4 +1,4 @@
-import client
+from .tiles import Tile, JigSawTiles
 from pygame import Rect, Surface
 
 TOP = BOTTOM = 1
