@@ -1,5 +1,6 @@
-from .tiles import Tile, JigSawTiles
 from pygame import Rect, Surface
+
+from .tiles import JigSawTiles, Tile
 
 TOP = BOTTOM = 1
 LEFT = RIGHT = 0
