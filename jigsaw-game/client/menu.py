@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from pygame.locals import QUIT, MOUSEBUTTONDOWN
 
@@ -29,6 +31,35 @@ def is_button_clicked(event, rect):
     return False
 
 
+def hamming_distance(current_positions, correct_positions):
+    """Calculate the Hamming distance between the current puzzle positions and the correct positions."""
+    return sum(current != correct for current, correct in zip(current_positions, correct_positions))
+
+
+def draw_completion_bar(screen, completion_percent, position, size):
+    """ Draws a completion bar on the screen.
+    Args:
+        screen (pygame.Surface): The surface to draw on.
+        completion_percent (float): The completion percentage (0.0.to 1.0)
+        position (tuple): (x,y) position ef the top-left corner of the bar.
+        size (tuple): (width, height) of the bar.
+    """
+    border_color = (0, 0, 0)
+    fill_color = (0, 255, 0)
+
+    pygame.draw.rect(screen, border_color, position + size, 2)
+
+    fill_width = int(size[0] * completion_percent)
+    pygame.draw.rect(screen, fill_color, (position[0], position[1], fill_width, size[1]))
+
+
+def simulate_tile_positions(total_tiles):
+    """
+    Simulate random tile position to produce random Hamming distance
+    """
+    return random.sample(range(total_tiles), total_tiles)
+
+
 # Views
 def game_selection_view():
     screen.fill(WHITE)
@@ -58,9 +89,41 @@ def play_game(difficulty):
     screen.fill(WHITE)
     message = f"You choose {difficulty} mode!"
     txt = font.render(message, True, BLUE)
+
     screen.blit(txt, (WIDTH // 2 - txt.get_width() // 2, HEIGHT // 2 - txt.get_height() // 2))
     pygame.display.flip()
     pygame.time.wait(2000)
+
+    total_tiles = 9
+    solution_tiles_positions = list(range(total_tiles))
+    clock = pygame.time.Clock()
+    counter = 0
+
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                return {"type": "quit"}
+
+        # Every 3 seconds, simulate a new tile position to change the completion percentage
+        if counter % 90 == 0:
+            tiles_positions = simulate_tile_positions(total_tiles)
+        counter += 1
+
+        # Calculate completion based on Hamming distance
+        distance = hamming_distance(tiles_positions, solution_tiles_positions)
+        completion_percent = 1 - (distance / len(tiles_positions))
+
+        # Clear the screen for fresh drawing
+        screen.fill(WHITE)
+
+        # Draw the completion bar
+        bar_position = (50, 500)
+        bar_size = (700, 20)
+        draw_completion_bar(screen, completion_percent, bar_position, bar_size)
+
+        pygame.display.flip()
+        clock.tick(30)  # Run the loop at 30 FPS
+
     return {"type": "menu"}
 
 
