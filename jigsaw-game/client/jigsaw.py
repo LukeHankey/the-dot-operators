@@ -1,5 +1,4 @@
 import client
-
 from pygame import Rect, Surface
 
 TOP = BOTTOM = 1
@@ -35,35 +34,30 @@ class JigSaw(Surface):
         )
         return offset
 
-    def border_check_snap(self, side: int, tile: 'client.Tile'):
+    def border_check_snap(self, side: int, tile: "client.Tile"):
         """Checks if the tile can be snapped to the game border and snaps it if it can"""
         if tile.rect.topleft[side] < tile.snapping_rect[side]:
             return tile.snap("topleft", 0, side)
-        elif tile.rect.bottomright[side] > (
-                self.size[side] - tile.snapping_rect[side]
-        ):
+        elif tile.rect.bottomright[side] > (self.size[side] - tile.snapping_rect[side]):
             return tile.snap("bottomright", self.size[side], side)
         return False
 
     @staticmethod
-    def tile_check_snap(self, side: int, tile: 'client.Tile', check_tile: 'client.Tile'):
+    def tile_check_snap(
+        self, side: int, tile: "client.Tile", check_tile: "client.Tile"
+    ):
         """Checks if the tile can be snapped to the check_tile and snaps it if it can"""
-        topleft_snap = abs(
-            check_tile.rect.bottomright[side] - tile.rect.topleft[side]
-        )
+        topleft_snap = abs(check_tile.rect.bottomright[side] - tile.rect.topleft[side])
         bottomright_snap = abs(
             check_tile.rect.topleft[side] - tile.rect.bottomright[side]
         )
-        if (
-                topleft_snap < bottomright_snap
-                and topleft_snap <= tile.snapping_rect[side]
-        ):
+        if topleft_snap < bottomright_snap and topleft_snap <= tile.snapping_rect[side]:
             return tile.snap("topleft", check_tile.rect.bottomright[side], side)
         elif bottomright_snap <= tile.snapping_rect[side]:
             return tile.snap("bottomright", check_tile.rect.topleft[side], side)
         return False
 
-    def mouse_down(self, tiles: 'client.JigSawTiles', mouse_position: tuple[int, int]):
+    def mouse_down(self, tiles: "client.JigSawTiles", mouse_position: tuple[int, int]):
         """Handler for if mouse press down in jigsaw surface"""
         # [::-1] reverse list check is downwards in z depth
         for tile in tiles.sprites()[::-1]:
@@ -75,7 +69,7 @@ class JigSaw(Surface):
                 break
         return tiles
 
-    def mouse_up(self, tiles: 'client.JigSawTiles', mouse_position: tuple[int, int]):
+    def mouse_up(self, tiles: "client.JigSawTiles", mouse_position: tuple[int, int]):
         """Handler for if mouse press release in jigsaw surface"""
         active_tile = tiles.get_active()
 
@@ -102,7 +96,9 @@ class JigSaw(Surface):
         active_tile.deactivate()
 
     @staticmethod
-    def mouse_motion(self, tiles: 'client.JigSawTiles', mouse_position: tuple[int, int]):
+    def mouse_motion(
+        self, tiles: "client.JigSawTiles", mouse_position: tuple[int, int]
+    ):
         """Handler for if mouse moving on jigsaw surface"""
         for tile in tiles.sprites()[::-1]:
             if tile.active:
