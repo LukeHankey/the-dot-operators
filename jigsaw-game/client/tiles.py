@@ -8,7 +8,7 @@ class Tile(sprite.Sprite):
     bounding box methods
     """
 
-    def __init__(self, pos: tuple[int, int], cropped_image):
+    def __init__(self, pos: tuple[int, int], overlap, cropped_image):
         """Basic init method that takes pillow image into pygame image"""
         super().__init__()
         self.image = image.fromstring(
@@ -18,7 +18,7 @@ class Tile(sprite.Sprite):
         self.rect.topleft = pos
         self.active = False
         self.drag_offset: tuple[int, int]
-        self.snapping_rect = (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5)
+        self.snapping_rect = (self.rect.size[0] * overlap, self.rect.size[1] * overlap)
 
     def activate(self, pointer: tuple[int, int]):
         """Could add tile highlighting and other affects"""

@@ -14,6 +14,8 @@ if __name__ == "__main__":
             f"images/{filename}" for filename in listdir(path)
         ]
     )
-    filename = join(split(__file__)[0], filename)
-    game = GameClient(filename, 16)
+    action = {"num_of_tiles": 16}
+    action["overlap"] = 0.25  # 25% is the default value with a minimum of 15%
+    action["filename"] = join(split(__file__)[0], filename)
+    game = GameClient(action)
     game.mainloop()

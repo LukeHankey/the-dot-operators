@@ -31,7 +31,7 @@ BLACK = (000, 000, 000)
 class GameClient:
     """When the puzzle is chosen the game starts here"""
 
-    def __init__(self, filename: str, num_of_tiles: int):
+    def __init__(self, action: dict):
         """Initialization method
 
         This gets the resized and cropped image then tiles it
@@ -39,10 +39,11 @@ class GameClient:
         init()
         self.screen = display.set_mode(SCREEN_DIMENSIONS, RESIZABLE)
         self.tiles = JigSawTiles()
-        image = get_image(filename, SCREEN_DIMENSIONS, num_of_tiles)
+        num_of_tiles = action["num_of_tiles"]
+        image = get_image(action["filename"], SCREEN_DIMENSIONS, num_of_tiles)
         self.jigsaw = JigSaw(self.screen, image.size)
         for pos, image_tile in tile_splitter(square_tiler, image, num_of_tiles):
-            self.tiles.add(Tile(pos, image_tile))
+            self.tiles.add(Tile(pos, action["overlap"], image_tile))
 
     def mainloop(self):
         """The main game loop that currently looks for mouse and quit events"""
