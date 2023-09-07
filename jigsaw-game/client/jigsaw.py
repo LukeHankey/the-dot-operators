@@ -28,11 +28,7 @@ class JigSaw(Surface):
 
     def translate(self, position: tuple[int, int]):
         """Adjust screen coordinates to jigsaw surface coordinates"""
-        offset = (
-            position[0] - self.rect.topleft[0],
-            position[1] - self.rect.topleft[1],
-        )
-        return offset
+        return position[0] - self.rect.topleft[0], position[1] - self.rect.topleft[1]
 
     def border_check_snap(self, side: int, tile: "client.Tile"):
         """Checks if the tile can be snapped to the game border and snaps it if it can"""
