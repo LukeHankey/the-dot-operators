@@ -70,7 +70,7 @@ def fitted_text_mask(
 def filter_tiles(
     text_tiles: list[tuple[tuple[int, int], Image.Image]],
     normal_tiles: list[tuple[tuple[int, int], Image.Image]],
-):
+) -> Generator[tuple[tuple[int, int], Image | None], None, None]:
     """Generator to find matching tiles
 
     If tiles do not match they are set to None, to tell the GUI
