@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from typing import Literal
 
 from PIL.Image import Image, new
 from PIL.ImageDraw import Draw
@@ -12,7 +13,7 @@ class Tile(sprite.Sprite):
     bounding box methods
     """
 
-    def __init__(self, pos: tuple[int, int], cropped_image: Image) -> None:
+    def __init__(self, pos: tuple[int, int], overlap, cropped_image: Image) -> None:
         """Basic init method that takes pillow image into pygame image"""
         super().__init__()
         self.image = image.fromstring(
@@ -22,6 +23,7 @@ class Tile(sprite.Sprite):
         self.rect.topleft = pos
         self.active = False
         self.drag_offset: tuple[int, int]
+        self.snapping_rect = (self.rect.size[0] * overlap, self.rect.size[1] * overlap)
 
     def activate(self, pointer: tuple[int, int]) -> None:
         """Could add tile highlighting and other affects"""
@@ -43,21 +45,32 @@ class Tile(sprite.Sprite):
             pointer[1] - self.drag_offset[1],
         )
 
-    def snap_h(self, side: int, h_coord: int) -> None:
+    def snap(self, side: str, coord: int, axis: int) -> Literal[True]:
         """Snaps the tile to other tiles/image borders on the horizontal axis"""
-        match side:
-            case 0:
-                self.rect.midleft = (h_coord, self.rect.midleft[1])
-            case 1:
-                self.rect.midright = (h_coord, self.rect.midright[1])
+        if side == "topleft":
+            tmp_coord = list(self.rect.topleft)
+            tmp_coord[axis] = coord
+            self.rect.topleft = tuple(tmp_coord)
+        else:
+            tmp_coord = list(self.rect.bottomright)
+            tmp_coord[axis] = coord
+            self.rect.bottomright = tuple(tmp_coord)
+        return True
 
-    def snap_v(self, side: int, v_coord: int) -> None:
-        """Snaps the tile to other tiles/image borders on the vertical axis"""
-        match side:
-            case 1:
-                self.rect.midbottom = (self.rect.midbottom[0], v_coord)
-            case 0:
-                self.rect.midtop = (self.rect.midtop[0], v_coord)
+
+class JigSawTiles(sprite.Group):
+    """Inheritance for the addition of Group methods concerning active tiles"""
+
+    def get_active(self) -> Tile | None:
+        """Return the active tile"""
+        for tile in self.sprites()[::-1]:
+            if tile.active:
+                return tile
+        return None
+
+    def get_inactives(self) -> list[Tile]:
+        """Return the inactive tiles"""
+        return [tile for tile in self.sprites() if not tile.active]
 
 
 def trianglular_tiles(

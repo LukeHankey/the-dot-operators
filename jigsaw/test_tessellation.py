@@ -1,11 +1,9 @@
-#!/usr/bin/venv python3
-"""This the main entry point"""
-
 from os import listdir
 from os.path import join, split
 from random import choice
 
-from .client import GameClient
+from common import get_image
+from common.tessellation import polygon_tile_splitter, square_grid
 
 path = join(split(__file__)[0], "images")
 filename = choice(
@@ -14,8 +12,7 @@ filename = choice(
     ]
 )
 filename = join(split(__file__)[0], filename)
-action = {"num_of_tiles": 16}
-action["overlap"] = 0.25  # 25% is the default value with a minimum of 15%
-action["filename"] = join(split(__file__)[0], filename)
-game = GameClient(action)
-game.mainloop()
+image = get_image(join(split(__file__)[0], filename), (1000, 1000), 20)
+for points, triangle, tile in polygon_tile_splitter(square_grid, image, 20):
+    print(points)
+    tile.show()
