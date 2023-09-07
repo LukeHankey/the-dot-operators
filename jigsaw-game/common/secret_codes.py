@@ -78,7 +78,7 @@ def filter_tiles(
     If tiles do not match they are set to None, to tell the GUI
     no tile here, skip, move to next tile
     """
-    for (sp, stile), (np, ntile) in zip(text_tiles, normal_tiles):
+    for (_, stile), (np, ntile) in zip(text_tiles, normal_tiles):
         if not difference(stile, ntile).getbbox():
             yield (np, ntile)
         else:
