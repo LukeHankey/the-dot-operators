@@ -34,6 +34,7 @@ def fitted_text_mask(image: Image, text: str) -> Image:
     image = deepcopy(image)  # deepcopy to prevent modifying the original
     font_size = 1
     width, height = image.size
+
     text_parameters = {  # default parameters for `multiline_textbbox`
         "font": truetype(FONT_NAME, size=font_size),
         "anchor": None,
