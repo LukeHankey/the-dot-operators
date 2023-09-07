@@ -29,9 +29,7 @@ def insert_newline_in_centered_space(string: str) -> str:
     return "".join(split_string)
 
 
-def fitted_text_mask(
-    image: Image, text: str, text_color: tuple[int, int, int] = (0, 0, 0)
-) -> Image:
+def fitted_text_mask(image: Image, text: str) -> Image:
     """Write text to the image that fits to the edges"""
     image = deepcopy(image)  # deepcopy to prevent modifying the original
     font_size = 1
