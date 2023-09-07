@@ -29,7 +29,7 @@ def regular(
     ],
     image: Image,
     num_of_tiles: int,
-) -> list[tuple[tuple[int, int], Image]]:
+) -> dict[tuple[int, int], Image]:
     """Opens image file and splits it into tiles and shuffles them"""
     sequence: dict[tuple[int, int], Image] = {}
     num_of_tiles = int(sqrt(num_of_tiles))
@@ -40,12 +40,19 @@ def regular(
     for pos, tile in tile_generator(image, width, height):
         sequence[pos] = tile
 
+    return sequence
+
+
+def tile_scrambler(
+    tiles: dict[tuple[int, int], Image]
+) -> list[tuple[tuple[int, int], Image]]:
+    """Extract out the positions to shuffle then add back in"""
     # extract out the positions to shuffle then add back in
-    positions = list(sequence)
+    positions = list(tiles)
     shuffle(positions)
 
     new_sequence = [
-        (position, image) for position, image in zip(positions, sequence.values())
+        (position, image) for position, image in zip(positions, tiles.values())
     ]
 
     return new_sequence
