@@ -15,7 +15,7 @@ class JigSaw(Surface):
         self.size = size
         self.set_bounds()
 
-    def set_bounds(self):
+    def set_bounds(self) -> None:
         """Called to set the real surface coords"""
         screen_bounds = self.screen.get_rect()
         surface_bounds = self.get_rect()
