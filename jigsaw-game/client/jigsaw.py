@@ -43,9 +43,7 @@ class JigSaw(Surface):
         return False
 
     @staticmethod
-    def tile_check_snap(
-        self, side: int, tile: "client.Tile", check_tile: "client.Tile"
-    ):
+    def tile_check_snap(side: int, tile: "client.Tile", check_tile: "client.Tile"):
         """Checks if the tile can be snapped to the check_tile and snaps it if it can"""
         topleft_snap = abs(check_tile.rect.bottomright[side] - tile.rect.topleft[side])
         bottomright_snap = abs(
@@ -96,9 +94,7 @@ class JigSaw(Surface):
         active_tile.deactivate()
 
     @staticmethod
-    def mouse_motion(
-        self, tiles: "client.JigSawTiles", mouse_position: tuple[int, int]
-    ):
+    def mouse_motion(tiles: "client.JigSawTiles", mouse_position: tuple[int, int]):
         """Handler for if mouse moving on jigsaw surface"""
         for tile in tiles.sprites()[::-1]:
             if tile.active:
