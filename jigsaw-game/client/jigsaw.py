@@ -8,7 +8,7 @@ LEFT = RIGHT = 0
 class JigSaw(Surface):
     """This is the Surface that the user interacts with the puzzle"""
 
-    def __init__(self, screen: Surface, size: tuple[int, int]):
+    def __init__(self, screen: Surface, size: tuple[int, int]) -> None:
         """Set Jigsaw position"""
         super(JigSaw, self).__init__(size)
         self.screen = screen
