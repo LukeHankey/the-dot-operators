@@ -56,12 +56,12 @@ class Tile(sprite.Sprite):
 class JigSawTiles(sprite.Group):
     """Inheritance for the addition of Group methods concerning active tiles"""
 
-    def get_active(self):
+    def get_active(self) -> Tile | None:
         """Return the active tile"""
         for tile in self.sprites()[::-1]:
             if tile.active:
                 return tile
-        return False
+        return None
 
     def get_inactives(self) -> list[Tile]:
         """Return the inactive tiles"""

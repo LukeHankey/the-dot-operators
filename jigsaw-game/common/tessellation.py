@@ -1,16 +1,17 @@
 from collections.abc import Generator
 from operator import itemgetter
 from random import shuffle
-from typing import Callable
+from typing import Any, Callable
 
-from numpy import arange, array, column_stack, meshgrid, sqrt
+from numpy import arange, column_stack, float64, int64, intc, meshgrid, sqrt
+from numpy.typing import NDArray
 from PIL.Image import Image, new
 from PIL.ImageChops import composite
 from PIL.ImageDraw import Draw
 from scipy.spatial import Delaunay
 
 
-def square_grid(width: int, height: int, num_of_tiles: int) -> array:
+def square_grid(width: int, height: int, num_of_tiles: int) -> NDArray[int64]:
     """This function is an example to compare with isogrid.
 
     This doesn't actually create squares by itself as Delaunay breaks
@@ -23,7 +24,7 @@ def square_grid(width: int, height: int, num_of_tiles: int) -> array:
     return column_stack((xv[inside_isogrid], yv[inside_isogrid]))
 
 
-def isogrid(width: int, height: int, num_of_tiles: int) -> array:
+def isogrid(width: int, height: int, num_of_tiles: int) -> NDArray[float64]:
     """A grid that produces regular triangles
 
     Read [here](https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons)
@@ -46,8 +47,8 @@ def isogrid(width: int, height: int, num_of_tiles: int) -> array:
 
 
 def polygon_tile_splitter(
-    tiler: Callable[[int, int, int], array], image: Image, num_of_tiles: int
-):
+    tiler: Callable[[int, int, int], NDArray[float64]], image: Image, num_of_tiles: int
+) -> Generator[tuple[list[tuple[Any, Any]], NDArray[intc], Image], None, None]:
     """This will take in the `tiler` and run it to get its grid points
 
     I think isogrid will become the default and we will build up shapes
