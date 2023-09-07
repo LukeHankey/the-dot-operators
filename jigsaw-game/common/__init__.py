@@ -76,7 +76,7 @@ def regular(
 
 
 def tile_scrambler(
-    tiles: list[tuple[tuple[int, int], Image] | tuple[tuple[int, int], None]]
+    tiles: list[tuple[tuple[int, int], Image | None]]
 ) -> list[tuple[tuple[int, int], Image | None]]:
     """Extract out the positions to shuffle then add back in"""
     positions = list(map(itemgetter(0), tiles))
