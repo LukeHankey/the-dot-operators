@@ -49,7 +49,9 @@ def isogrid(width: int, height: int, num_of_tiles: int) -> NDArray[float64]:
 
 
 def polygon_tile_splitter(
-    tiler: Callable[[int, int, int], NDArray[float64]], image: Image, num_of_tiles: int
+    tiler: Callable[[int, int, int], NDArray[float64 | int64]],
+    image: Image,
+    num_of_tiles: int,
 ) -> Generator[tuple[list[tuple[Any, Any]], NDArray[intc], Image], None, None]:
     """This will take in the `tiler` and run it to get its grid points
 
