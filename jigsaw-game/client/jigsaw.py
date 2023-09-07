@@ -30,7 +30,7 @@ class JigSaw(Surface):
         """Adjust screen coordinates to jigsaw surface coordinates"""
         return position[0] - self.rect.topleft[0], position[1] - self.rect.topleft[1]
 
-    def border_check_snap(self, side: int, tile: "client.Tile"):
+    def border_check_snap(self, side: int, tile: Tile):
         """Checks if the tile can be snapped to the game border and snaps it if it can"""
         if tile.rect.topleft[side] < tile.snapping_rect[side]:
             return tile.snap("topleft", 0, side)
@@ -39,7 +39,7 @@ class JigSaw(Surface):
         return False
 
     @staticmethod
-    def tile_check_snap(side: int, tile: "client.Tile", check_tile: "client.Tile"):
+    def tile_check_snap(side: int, tile: Tile, check_tile: Tile):
         """Checks if the tile can be snapped to the check_tile and snaps it if it can"""
         topleft_snap = abs(check_tile.rect.bottomright[side] - tile.rect.topleft[side])
         bottomright_snap = abs(
@@ -51,7 +51,7 @@ class JigSaw(Surface):
             return tile.snap("bottomright", check_tile.rect.topleft[side], side)
         return False
 
-    def mouse_down(self, tiles: "client.JigSawTiles", mouse_position: tuple[int, int]):
+    def mouse_down(self, tiles: JigSawTiles, mouse_position: tuple[int, int]):
         """Handler for if mouse press down in jigsaw surface"""
         # [::-1] reverse list check is downwards in z depth
         for tile in tiles.sprites()[::-1]:
@@ -63,7 +63,7 @@ class JigSaw(Surface):
                 break
         return tiles
 
-    def mouse_up(self, tiles: "client.JigSawTiles", mouse_position: tuple[int, int]):
+    def mouse_up(self, tiles: JigSawTiles, mouse_position: tuple[int, int]):
         """Handler for if mouse press release in jigsaw surface"""
         active_tile = tiles.get_active()
 
@@ -90,7 +90,7 @@ class JigSaw(Surface):
         active_tile.deactivate()
 
     @staticmethod
-    def mouse_motion(tiles: "client.JigSawTiles", mouse_position: tuple[int, int]):
+    def mouse_motion(tiles: JigSawTiles, mouse_position: tuple[int, int]):
         """Handler for if mouse moving on jigsaw surface"""
         for tile in tiles.sprites()[::-1]:
             if tile.active:
