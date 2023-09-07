@@ -1,21 +1,6 @@
 from pygame import image, sprite
 
 
-class JigSawTiles(sprite.Group):
-    """Inheritance for the addition of Group methods concerning active tiles"""
-
-    def get_active(self):
-        """Return the active tile"""
-        for tile in self.sprites()[::-1]:
-            if tile.active:
-                return tile
-        return False
-
-    def get_inactives(self) -> list[Tile]:
-        """Return the inactive tiles"""
-        return [tile for tile in self.sprites() if not tile.active]
-
-
 class Tile(sprite.Sprite):
     """Tile which is a cropped image at a specifc point.
 
@@ -33,7 +18,7 @@ class Tile(sprite.Sprite):
         self.rect.topleft = pos
         self.active = False
         self.drag_offset: tuple[int, int]
-        self.snapping_rect = (self.rect.size[0] * 0.15, self.rect.size[1] * 0.15)
+        self.snapping_rect = (self.rect.size[0] * 0.5, self.rect.size[1] * 0.5)
 
     def activate(self, pointer: tuple[int, int]):
         """Could add tile highlighting and other affects"""
@@ -65,3 +50,18 @@ class Tile(sprite.Sprite):
             tmp_coord = list(self.rect.bottomright)
             tmp_coord[axis] = coord
             self.rect.bottomright = tuple(tmp_coord)
+
+
+class JigSawTiles(sprite.Group):
+    """Inheritance for the addition of Group methods concerning active tiles"""
+
+    def get_active(self):
+        """Return the active tile"""
+        for tile in self.sprites()[::-1]:
+            if tile.active:
+                return tile
+        return False
+
+    def get_inactives(self) -> list[Tile]:
+        """Return the inactive tiles"""
+        return [tile for tile in self.sprites() if not tile.active]
