@@ -29,9 +29,4 @@ def tile_scrambler(
     # extract out the positions to shuffle then add back in
     positions = list(tiles)
     shuffle(positions)
-
-    new_sequence = [
-        (position, image) for position, image in zip(positions, tiles.values())
-    ]
-
-    return new_sequence
+    return zip(positions, tiles.values())
