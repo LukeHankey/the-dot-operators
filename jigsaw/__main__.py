@@ -7,7 +7,7 @@ from random import choice
 
 from client import GameClient
 from tessellation import square_tiler, tile_splitter
-from utils import get_image
+from utils import get_image, tile_scrambler
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 SCREEN_DIMENSIONS = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -28,11 +28,13 @@ filename = choice(
 filename = join(split(__file__)[0], filename)
 
 image = get_image(filename, SCREEN_DIMENSIONS, DEFAULT_TILE_NUMBER)
+correct_tiles = tile_splitter(square_tiler, image, DEFAULT_TILE_NUMBER)
 action = {
     "num_of_tiles": DEFAULT_TILE_NUMBER,
     "image": image,
     "overlap": DEFAULT_OVERLAP,
-    "tiles": tile_splitter(square_tiler, image, DEFAULT_TILE_NUMBER),
+    "solved_tiles": correct_tiles,
+    "scrambled_tiles": tile_scrambler(correct_tiles),
 }
 
 game = GameClient(action)

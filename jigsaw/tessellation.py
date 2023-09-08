@@ -95,37 +95,9 @@ def tile_splitter(
     height = image.height // num_of_tiles
 
     for pos, tile in tile_generator(image, width, height):
-        sequence[pos] = tile
+        sequence[pos] = (pos, tile)
 
     return sequence
-
-
-def trianglular_tiler(
-    image: Image, width: int, height: int
-) -> Generator[tuple[tuple[int, int], Image], None, None]:
-    """Tile generator with the inner most loop calling the specific
-
-    shape for tiling applies the mask of the shape then continues
-    """
-    for x in range(0, image.width, width):
-        for y in range(0, image.height, height):
-            mask = new("L", (width, height), 0)
-            draw = Draw(mask)
-            draw.polygon([(0, 0), (0, height), (width, height)], fill=255)
-
-            tile = image.crop((x, y, x + width, y + height))
-            tile.putalpha(mask)
-
-            yield (x, y), tile  # first yield for half the triangle
-
-            mask = new("L", (width, height), 0)
-            draw = Draw(mask)
-            draw.polygon([(0, 0), (width, 0), (width, height)], fill=255)
-
-            tile = image.crop((x, y, x + width, y + height))
-            tile.putalpha(mask)
-
-            yield (x, y), tile  # second yield for the other half
 
 
 def square_tiler(

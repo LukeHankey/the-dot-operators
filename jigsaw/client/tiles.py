@@ -12,13 +12,15 @@ class Tile(sprite.Sprite):
     """
 
     def __init__(
-        self, pos: tuple[int, int], overlap: float, cropped_image: Image
+        self: sprite.Sprite,
+        pos: tuple[int, int],
+        overlap: float,
+        tile: tuple[tuple[int, int], Image],
     ) -> None:
         """Basic init method that takes pillow image into pygame image"""
         super().__init__()
-        self.image = image.fromstring(
-            cropped_image.tobytes(), cropped_image.size, cropped_image.mode
-        )
+        self.image = image.fromstring(tile[1].tobytes(), tile[1].size, tile[1].mode)
+        self.correct_position = tile[0]
         self.rect = self.image.get_rect()
         self.rect.topleft = pos
         self.active = False
@@ -47,14 +49,9 @@ class Tile(sprite.Sprite):
 
     def snap(self, side: str, coord: int, axis: int) -> Literal[True]:
         """Snaps the tile to other tiles/image borders on the horizontal axis"""
-        if side == "topleft":
-            tmp_coord = list(self.rect.topleft)
-            tmp_coord[axis] = coord
-            self.rect.topleft = tuple(tmp_coord)
-        else:
-            tmp_coord = list(self.rect.bottomright)
-            tmp_coord[axis] = coord
-            self.rect.bottomright = tuple(tmp_coord)
+        tmp_coord = list(getattr(self.rect, side))
+        tmp_coord[axis] = coord
+        setattr(self.rect, side, tuple(tmp_coord))
         return True
 
 
