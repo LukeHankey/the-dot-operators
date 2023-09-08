@@ -11,7 +11,7 @@ class JigSaw(Surface):
 
     def __init__(self, screen: Surface, size: tuple[int, int]) -> None:
         """Set Jigsaw position"""
-        super(JigSaw, self).__init__(size)
+        super().__init__(size)
         self.screen = screen
         self.size = size
         self.set_bounds()
@@ -20,8 +20,10 @@ class JigSaw(Surface):
         """Called to set the real surface coords"""
         screen_bounds = self.screen.get_rect()
         surface_bounds = self.get_rect()
+
         x_offset = (screen_bounds.width - surface_bounds.width) // 2
         y_offset = (screen_bounds.height - surface_bounds.height) // 2
+
         self.rect = Rect(
             x_offset, y_offset, self.size[0] + x_offset, self.size[1] + y_offset
         )
@@ -45,6 +47,7 @@ class JigSaw(Surface):
         bottomright_snap = abs(
             check_tile.rect.topleft[side] - tile.rect.bottomright[side]
         )
+
         if topleft_snap < bottomright_snap and topleft_snap <= tile.snapping_rect[side]:
             return tile.snap("topleft", check_tile.rect.bottomright[side], side)
         elif bottomright_snap <= tile.snapping_rect[side]:

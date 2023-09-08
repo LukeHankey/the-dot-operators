@@ -1,8 +1,2 @@
 [tool.isort]
 profile = "black"
-
-[tool.pyright]
-pythonVersion = "3.11.*"
-
-reportMissingImports = false
-reportMissingModuleSource = false

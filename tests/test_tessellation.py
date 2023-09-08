@@ -2,13 +2,13 @@ from os import listdir
 from os.path import join, split
 from random import choice
 
-from common import get_image
-from common.tessellation import polygon_tile_splitter, square_grid
+from jigsaw.tessellation import polygon_tile_splitter, square_grid
+from jigsaw.utils import get_image
 
-path = join(split(__file__)[0], "images")
+path = join(split(__file__)[0], "../jigsaw/images")
 filename = choice(
     [  # get a random image on each game run
-        f"images/{filename}" for filename in listdir(path)
+        f"../jigsaw/images/{filename}" for filename in listdir(path)
     ]
 )
 filename = join(split(__file__)[0], filename)

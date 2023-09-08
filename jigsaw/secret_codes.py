@@ -34,38 +34,39 @@ def fitted_text_mask(image: Image, text: str) -> Image:
     image = deepcopy(image)  # deepcopy to prevent modifying the original
     font_size = 1
     width, height = image.size
-    text_parameters = [  # default parameters for `multiline_textbbox`
-        truetype(FONT_NAME, size=font_size),
-        None,
-        32,
-        "center",
-    ]
+
+    text_parameters = {  # default parameters for `multiline_textbbox`
+        "font": truetype(FONT_NAME, size=font_size),
+        "anchor": None,
+        "spacing": 32,
+        "align": "center",
+    }
 
     # dummy draw to see the first bbox
     draw = Draw(image)
     *_, text_width, text_height = draw.multiline_textbbox(
-        (0, 0), text, *text_parameters
+        (0, 0), text, **text_parameters
     )
 
     while text_width < width and text_height < height:
         font_size += 1
-        text_parameters[0] = truetype(FONT_NAME, font_size)
+        text_parameters["font"] = truetype(FONT_NAME, font_size)
         *_, text_width, text_height = draw.multiline_textbbox(
-            (0, 0), text, *text_parameters
+            (0, 0), text, **text_parameters
         )
 
         # if trailing off edge make multiline
         if text_width >= width and "\n" not in text:
             text = insert_newline_in_centered_space(text)
             *_, text_width, text_height = draw.multiline_textbbox(
-                (0, 0), text, *text_parameters
+                (0, 0), text, **text_parameters
             )
 
     # decrement as we have gone to far then draw the text for real
     font_size -= 1
-    text_parameters[0] = truetype(FONT_NAME, font_size)
+    text_parameters["font"] = truetype(FONT_NAME, font_size)
     draw = Draw(image)
-    draw.text((0, 0), text, "white", *text_parameters)
+    draw.text((0, 0), text, "white", **text_parameters)
     return image
 
 
