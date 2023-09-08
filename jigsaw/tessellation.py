@@ -1,9 +1,9 @@
 from collections.abc import Callable, Generator
 from math import atan2
-from typing import Any
 
 import numpy as np
-from numpy.typing import NDArray
+
+# from numpy.typing import NDArray
 from PIL.Image import Image, new
 from PIL.ImageChops import composite
 from PIL.ImageDraw import Draw
@@ -20,81 +20,52 @@ def edge_parameters(verticies):
     return edges
 
 
-def square_grid(width: int, height: int, num_of_tiles: int) -> NDArray[np.int64]:
-    """This function is an example to compare with isogrid.
-
-    This doesn't actually create squares by itself as Delaunay breaks
-    any grid into triangles.
-    """
-    x_spacing = width // num_of_tiles
-    y_spacing = height // num_of_tiles
-
-    xv, yv = np.meshgrid(
-        np.arange(0, width, x_spacing), np.arange(0, height, y_spacing)
-    )
-    inside_isogrid = (xv >= 0) & (xv <= width + 1) & (yv >= 0) & (yv <= height + 1)
-
-    return np.column_stack((xv[inside_isogrid], yv[inside_isogrid]))
-
-
-def isogrid(width: int, height: int, num_of_tiles: int) -> NDArray[np.float64]:
+def __iso(
+    image: Image, width: int, height: int, y_axis: bool
+) -> Generator[
+    tuple[tuple[int, int], tuple[tuple[int, int], Image, tuple[float, float, float]]],
+    None,
+    None,
+]:
     """A grid that produces regular triangles
 
     Read [here](https://en.wikipedia.org/wiki/Euclidean_tilings_by_convex_regular_polygons)
     for more about the different grid patterns
     """
-    x_spacing = width // num_of_tiles
-    y_spacing = height // num_of_tiles
-
-    # Create a np.meshgrid of points
     xv, yv = np.meshgrid(
-        np.arange(0, width, x_spacing), np.arange(0, height, y_spacing * np.sqrt(3) / 2)
+        np.arange(0, image.width, width * (np.sqrt(3) / 2 if not y_axis else 1)),
+        np.arange(0, image.height, height * (np.sqrt(3) / 2 if y_axis else 1)),
     )
+    if y_axis:
+        yv[:, 1::2] += height / 2  # offset on even
+    else:
+        xv[1::2, :] += width / 2  # offset on even
+    inside_isogrid = (xv >= 0) & (xv <= image.width) & (yv >= 0) & (yv <= image.height)
 
-    # Offset rows of points
-    offset = y_spacing / 2
-    yv[:, 1::2] += offset
+    points = np.column_stack((xv[inside_isogrid], yv[inside_isogrid]))
 
-    # Filter points to keep only those inside the isogrid pattern
-    inside_isogrid = (xv >= 0) & (xv <= width) & (yv >= 0) & (yv <= height)
-
-    return np.column_stack((xv[inside_isogrid], yv[inside_isogrid]))
-
-
-def polygon_tile_splitter(
-    tiler: Callable[[int, int, int], NDArray[np.float64 | np.int64]],
-    image: Image,
-    num_of_tiles: int,
-) -> Generator[tuple[list[tuple[Any, Any]], NDArray[np.intc], Image], None, None]:
-    """This will take in the `tiler` and run it to get its grid points
-
-    I think isogrid will become the default and we will build up shapes
-    from their, maybe change to 'offset' to allow slightly different triangles.
-    the `tiler` function will then become a "contructer" to stitch triangles
-    together
-    """
-    num_of_tiles = int(np.sqrt(num_of_tiles))
-
-    width, height = image.width, image.height
-    points = tiler(width, height, num_of_tiles)
-
-    # Draw lines along the triangulation edges
     for triangle in Delaunay(points).simplices:
         verticies = [points[triangle[i]] for i in range(3)]
         verticies = [(p[0], p[1]) for p in verticies]
-
         mask = new("L", image.size, 0)
-
         draw = Draw(mask)
         draw.polygon(verticies, fill=255)
-
         tile = composite(image, new("RGBA", image.size, (0, 0, 0, 0)), mask)
-
         yield mask.getbbox()[:2], (
-            verticies,
-            edge_parameters(verticies),
+            mask.getbbox()[:2],
             tile.crop(mask.getbbox()),
+            (verticies, edge_parameters(verticies)),
         )
+
+
+def y_iso(image, width, height):
+    """A generator Isogrid which shifts on the y axis"""
+    yield from __iso(image, width, height, True)
+
+
+def x_iso(image, width, height):
+    """A generator Isogrid which shifts on the x axis"""
+    yield from __iso(image, width, height, False)
 
 
 def tile_splitter(
@@ -103,21 +74,18 @@ def tile_splitter(
     ],
     image: Image,
     num_of_tiles: int,
-) -> dict[tuple[int, int], Image]:
+) -> Generator[tuple[tuple[int, int], Image], None, None]:
     """Opens image file and splits it into tiles and shuffles them"""
-    sequence: dict[tuple[int, int], Image] = {}
     num_of_tiles = int(np.sqrt(num_of_tiles))
 
     width = image.width // num_of_tiles
     height = image.height // num_of_tiles
 
-    for pos, tile in tile_generator(image, width, height):
-        sequence[pos] = (pos, tile)
-
-    return sequence
+    for pos, tile_params in tile_generator(image, width, height):
+        yield (pos, tile_params)
 
 
-def square_tiler(
+def square(
     image: Image, width: int, height: int
 ) -> Generator[tuple[tuple[int, int], Image], None, None]:
     """Tile generator with the inner most loop calling the specific
@@ -126,7 +94,8 @@ def square_tiler(
     """
     for x in range(0, image.width, width):
         for y in range(0, image.height, height):
-            yield (x, y), image.crop((x, y, x + width, y + height))
+            bbox = (x, y, x + width, y + height)
+            yield (x, y), ((x, y), image.crop(bbox), None)
 
 
 def einstein_tiler(
