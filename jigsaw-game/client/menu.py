@@ -167,6 +167,7 @@ def menu():
         pygame.display.flip()
 
     pygame.quit()
+    return action
 
-
-menu()
+if __name__ == "__main__":
+    print(menu())

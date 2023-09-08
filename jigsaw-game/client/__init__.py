@@ -89,7 +89,7 @@ class JigSaw(Surface):
 class GameClient:
     """When the puzzle is chosen the game starts here"""
 
-    def __init__(self, filename: str, num_of_tiles: int):
+    def __init__(self, action: dict):
         """Initialization method
 
         This gets the resized and cropped image then tiles it
@@ -97,7 +97,9 @@ class GameClient:
         init()
         self.screen = display.set_mode(SCREEN_DIMENSIONS, RESIZABLE)
         self.tiles = sprite.Group()
-        image = get_image(filename, SCREEN_DIMENSIONS, num_of_tiles)
+        num_of_tiles = action["num_of_tiles"]
+        image = get_image(
+            action["filename"], SCREEN_DIMENSIONS, num_of_tiles)
         self.jigsaw = JigSaw(self.screen, image.size)
         for pos, image_tile in regular(square_tiles, image, num_of_tiles):
             self.tiles.add(Tile(pos, image_tile))
