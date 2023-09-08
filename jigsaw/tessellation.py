@@ -77,7 +77,7 @@ def polygon_tile_splitter(
 
         tile = composite(image, new("RGBA", image.size, (0, 0, 0, 0)), mask)
 
-        yield pts, triangle, tile.crop(mask.getbbox())
+        yield mask.getbbox()[:2], (pts, tile.crop(mask.getbbox()))
 
 
 def tile_splitter(

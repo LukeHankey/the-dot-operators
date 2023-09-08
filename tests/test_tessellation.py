@@ -13,6 +13,9 @@ filename = choice(
 )
 filename = join(split(__file__)[0], filename)
 image = get_image(join(split(__file__)[0], filename), (1000, 1000), 20)
-for points, triangle, tile in polygon_tile_splitter(isogrid, image, 20):
-    print(points, triangle)
-    tile.show()
+output = "n" not in input("do you want to output the images? [yes] ")
+print(" topleft \t:\t vertex_0\tvertex_1\tvertex_2")
+for points, (triangle, tile) in polygon_tile_splitter(isogrid, image, 20):
+    print(points, "\t:\t", *[(int(x), int(y)) for x, y in triangle])
+    if output:
+        tile.show()
