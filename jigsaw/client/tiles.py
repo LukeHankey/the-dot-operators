@@ -1,3 +1,6 @@
+from typing import Literal
+
+from PIL.Image import Image
 from pygame import image, sprite
 
 
@@ -8,7 +11,9 @@ class Tile(sprite.Sprite):
     bounding box methods
     """
 
-    def __init__(self, pos: tuple[int, int], overlap, cropped_image):
+    def __init__(
+        self, pos: tuple[int, int], overlap: float, cropped_image: Image
+    ) -> None:
         """Basic init method that takes pillow image into pygame image"""
         super().__init__()
         self.image = image.fromstring(
@@ -20,7 +25,7 @@ class Tile(sprite.Sprite):
         self.drag_offset: tuple[int, int]
         self.snapping_rect = (self.rect.size[0] * overlap, self.rect.size[1] * overlap)
 
-    def activate(self, pointer: tuple[int, int]):
+    def activate(self, pointer: tuple[int, int]) -> None:
         """Could add tile highlighting and other affects"""
         self.active = True
         self.drag_offset = (
@@ -28,19 +33,19 @@ class Tile(sprite.Sprite):
             pointer[1] - self.rect.topleft[1],
         )
 
-    def deactivate(self):
+    def deactivate(self) -> None:
         """Remove anything `activate` added"""
         self.active = False
         self.drag_offset = (0, 0)  # so move can be used more directly
 
-    def move(self, pointer: tuple[int, int]):
+    def move(self, pointer: tuple[int, int]) -> None:
         """Move tile to pointer could be a mouse pointer or anything"""
         self.rect.topleft = (
             pointer[0] - self.drag_offset[0],
             pointer[1] - self.drag_offset[1],
         )
 
-    def snap(self, side: str, coord: int, axis: int):
+    def snap(self, side: str, coord: int, axis: int) -> Literal[True]:
         """Snaps the tile to other tiles/image borders on the horizontal axis"""
         if side == "topleft":
             tmp_coord = list(self.rect.topleft)

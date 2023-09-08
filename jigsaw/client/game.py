@@ -1,10 +1,6 @@
-#!/usr/bin/venv python3
-"""This is all the GUI magic"""
-
 from sys import exit
+from typing import Any, NoReturn
 
-from common import get_image
-from common.tessellation import square_tiler, tile_splitter
 from pygame import display, event, init, mouse, quit
 from pygame.locals import (
     MOUSEBUTTONDOWN,
@@ -31,21 +27,21 @@ BLACK = (000, 000, 000)
 class GameClient:
     """When the puzzle is chosen the game starts here"""
 
-    def __init__(self, action: dict):
+    def __init__(self, action: dict[str, Any]) -> None:
         """Initialization method
 
         This gets the resized and cropped image then tiles it
         """
         init()
+
         self.screen = display.set_mode(SCREEN_DIMENSIONS, RESIZABLE)
+        self.jigsaw = JigSaw(self.screen, action["image"].size)
         self.tiles = JigSawTiles()
-        num_of_tiles = action["num_of_tiles"]
-        image = get_image(action["filename"], SCREEN_DIMENSIONS, num_of_tiles)
-        self.jigsaw = JigSaw(self.screen, image.size)
-        for pos, image_tile in tile_splitter(square_tiler, image, num_of_tiles):
+
+        for pos, image_tile in action["tiles"].items():
             self.tiles.add(Tile(pos, action["overlap"], image_tile))
 
-    def mainloop(self):
+    def mainloop(self) -> NoReturn:
         """The main game loop that currently looks for mouse and quit events"""
         while True:
             for e in event.get():
@@ -67,4 +63,5 @@ class GameClient:
             self.jigsaw.fill(WHITE)
             self.tiles.draw(self.jigsaw)
             self.screen.blit(self.jigsaw, self.jigsaw.center)
+
             display.update()
