@@ -208,4 +208,3 @@ def menu():
     pygame.quit()
 
 
-menu()
