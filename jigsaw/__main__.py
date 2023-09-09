@@ -1,13 +1,18 @@
 #!/usr/bin/venv python3
 """This the main entry point"""
 
+from json import dump, load
 from os import listdir
-from os.path import join, split
+from os.path import exists, join, split
 from random import choice
 
 from client import GameClient
 from tessellation import square_tiler, tile_splitter
 from utils import get_image
+
+LOG_FILENAME = ".log.json"
+
+game_log = load(open(LOG_FILENAME)) if exists(LOG_FILENAME) else {}
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 SCREEN_DIMENSIONS = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -37,3 +42,6 @@ action = {
 
 game = GameClient(action)
 game.mainloop()
+
+with open(LOG_FILENAME, "w") as log_file:
+    dump(game_log, log_file, indent=1)

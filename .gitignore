@@ -13,6 +13,7 @@ env
 
 # Logs
 *.log
+.token.json
 
 # PyEnv version selector
 .python-version
