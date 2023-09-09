@@ -1,6 +1,7 @@
 #!/usr/bin/venv python3
 """Core Image Manipulation functionality"""
 
+from collections.abc import Generator
 from math import sqrt
 from random import shuffle
 
@@ -23,10 +24,12 @@ def get_image(
 
 
 def tile_scrambler(
-    tiles: dict[tuple[int, int], Image]
+    tiles: Generator[tuple[tuple[int, int], Image], None, None]
 ) -> list[tuple[tuple[int, int], Image]]:
     """Extract out the positions to shuffle then add back in"""
     # extract out the positions to shuffle then add back in
-    positions = list(tiles)
+    gen_list = list(tiles)
+    positions = [pos for pos, _ in gen_list]
+    tile_list = [tile for _, tile in gen_list]
     shuffle(positions)
-    return zip(positions, tiles.values())
+    return zip(positions, tile_list)

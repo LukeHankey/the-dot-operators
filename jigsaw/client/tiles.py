@@ -58,7 +58,10 @@ class Tile(sprite.Sprite):
         """Checks if the tile is within the image"""
         local_x = coord[0] - self.rect.topleft[0]
         local_y = coord[1] - self.rect.topleft[1]
-        if 0 < local_x < self.image.get_width() and 0 < local_y < self.image.get_height():
+        if (
+            0 < local_x < self.image.get_width()
+            and 0 < local_y < self.image.get_height()
+        ):
             return self.image.get_at((local_x, local_y))[3] != 0
         return False
 
