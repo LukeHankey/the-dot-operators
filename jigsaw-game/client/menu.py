@@ -1,11 +1,17 @@
 import random
-
 import pygame
+import pygame_gui
 from pygame.locals import QUIT, MOUSEBUTTONDOWN
+from settings_view import settings_view
+from constants import WHITE, RED, BLUE, WIDTH, HEIGHT, screen, font, manager
+from credits_view import credits_view
+from buttons import create_buttons
 
 pygame.init()
 
+'''
 # Colors
+
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
@@ -13,9 +19,15 @@ BLUE = (0, 0, 255)
 # Screen dimensions
 WIDTH, HEIGHT = 800, 600
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
+font = pygame.font.SysFont(None, 36)  # Default font, size 36
+overlap_sensitivity = 5
+
 pygame.display.set_caption('Game Menu')
 
-font = pygame.font.SysFont(None, 36)  # Default font, size 36
+'''
+
+easy_button, medium_button, hard_button, scoreboard_button, settings_button, right_panel, credits_button = create_buttons(
+    manager)
 
 
 def draw_button(surface, rect, text, button_color, text_color):
@@ -51,6 +63,29 @@ def draw_completion_bar(screen, completion_percent, position, size):
 
     fill_width = int(size[0] * completion_percent)
     pygame.draw.rect(screen, fill_color, (position[0], position[1], fill_width, size[1]))
+
+
+def draw_slider(screen, rect, value, min_value, max_value):
+    """Draws a slider on the screen"""
+    border_color = (0, 0, 0)
+    fill_color = (0, 255, 0)
+    handle_color = (255, 0, 0)
+    pygame.draw.rect(screen, border_color, rect, 2)
+    fill_width = int(rect.width * ((value - min_value) / (max_value - min_value)))
+    pygame.draw.rect(screen, fill_color, (rect.x, rect.y, fill_width, rect.height))
+    handle_x = rect.x + fill_width - 5
+    pygame.draw.rect(screen, handle_color, (handle_x, rect.y, 10, rect.height))
+
+
+def tile_overlap_settings_view():
+    global overlap_sensitivity
+    screen.fill(WHITE)
+
+    slider_rect = pygame.Rect(100, 100, 200, 20)
+    back_button = pygame.Rect(100, 200, 200, 50)
+
+    draw_slider(screen, slider_rect, overlap_sensitivity, 0.15, 0.25)
+    draw_button(screen, back_button, "Back", RED, BLUE)
 
 
 def simulate_tile_positions(total_tiles):
@@ -124,21 +159,37 @@ def play_game(difficulty):
         pygame.display.flip()
         clock.tick(30)  # Run the loop at 30 FPS
 
-    return {"type": "menu"}
-
 
 def menu_view():
     screen.fill(WHITE)
-    game_selection_button = pygame.Rect(100, 100, 200, 50)
-    draw_button(screen, game_selection_button, "Game Selection", RED, BLUE)
 
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            return {"type": "quit"}
-        if is_button_clicked(event, game_selection_button):
-            return {"type": "game_selection"}
+    clock = pygame.time.Clock()
+    while True:
+        time_delta = clock.tick(60) / 1000.0
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                return {"type": "quit"}
+            if event.type == pygame.USEREVENT:
+                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == easy_button:
+                        return {"type": "play_game", "difficulty": "easy"}
+                    if event.ui_element == medium_button:
+                        return {"type": "play_game", "difficulty": "medium"}
+                    if event.ui_element == hard_button:
+                        return {"type": "play_game", "difficulty": "hard"}
+                    if event.ui_element == settings_button:
+                        return {"type": "settings"}
+                    if event.ui_element == credits_button:
+                        return {"type": "credits"}
 
-    return {"type": "menu"}
+            manager.process_events(event)
+
+        manager.update(time_delta)
+
+        screen.fill(WHITE)
+        manager.draw_ui(screen)
+
+        pygame.display.update()
 
 
 # Main loop
@@ -148,6 +199,8 @@ def menu():
     view_functions = {
         "menu": menu_view,
         "game_selection": game_selection_view,
+        "settings": settings_view,
+        "credits": credits_view,
     }
 
     while True:
@@ -167,7 +220,6 @@ def menu():
         pygame.display.flip()
 
     pygame.quit()
-    return action
 
-if __name__ == "__main__":
-    print(menu())
+
+menu()
