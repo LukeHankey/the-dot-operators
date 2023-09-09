@@ -3,26 +3,60 @@ from numpy import random
 from PIL import Image, ImageDraw
 from scipy.spatial import Voronoi
 
+from jigsaw.fcolor import palette_builder
 
-def voronoi_generator(width: int height: int):
-    random.seed(0)
-    points = array(list(zip(
-        random.randint(0, width),
-        random.randint(0, height))))
-    boundary_points = np.array([
-        [1, 1], [1, height - 1], [width - 1, 1], [width - 1, height - 1]])
-    points = np.concatenate((points, boundary_points), axis=0)
+CENTERED = True
+UNCENTERED = False
+
+
+def backing(width, height, seed_color, palette_function, from_center_color=UNCENTERED):
+    """Returns Voronoi image from dimensions, seed_color and palette_function"""
+    x_offset = width // 5
+    y_offset = height // 5
+    x_limit = width + x_offset * 2
+    y_limit = height + y_offset * 2
+    points = np.array(
+        list(
+            zip(
+                random.randint(0, x_limit, size=(100)),
+                random.randint(0, y_limit, size=(100)),
+            )
+        )
+    )
+    image = Image.new("RGB", (x_limit, y_limit), "white")
+    return voronoi_generator(
+        points,
+        image,
+        (x_offset, y_offset, width, height),
+        seed_color,
+        palette_function,
+        from_center_color,
+    )
+
+
+def voronoi_generator(
+    points, image, bbox, seed_color, palette_function, from_center_color
+):
+    """Voronoi is organic looking cells coloured in a specfic manner"""
     voronoi = Voronoi(points)
-    img = Image.new("RGB", (width, height), "white")
-    draw = ImageDraw.Draw(img)
-
-    # Step 4: Iterate through Voronoi regions and fill them with colors
-    color = lambda: (
-        random.randint(0, 256),
-        random.randint(0, 256),
-        random.randint(0, 256))
-    for region in voronoi.regions:
-        if len(region) > 0:  # and -1 not in region:
-            polygon = [tuple(voronoi.vertices[i]) for i in region]
-            draw.polygon(polygon, fill=color())
-    img.show()
+    draw = ImageDraw.Draw(image)
+    cells = voronoi.regions
+    colors = palette_builder(len(cells), palette_function, from_center_color)
+    palette = colors(*seed_color)
+    for num, cell in enumerate(cells):
+        if len(cell) > 0 and -1 not in cell:
+            polygon = [tuple(voronoi.vertices[index]) for index in cell]
+            if from_center_color:
+                centroid = np.mean(polygon, axis=0)
+                min_distance = min(
+                    centroid[0],
+                    centroid[1],
+                    image.width - centroid[0],
+                    image.height - centroid[1],
+                )
+                try:
+                    num = int(min_distance % num)
+                except ValueError:
+                    num = 0
+            draw.polygon(polygon, fill=palette[num])
+    return image.crop(bbox)
