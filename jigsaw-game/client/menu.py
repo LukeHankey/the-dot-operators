@@ -6,6 +6,7 @@ from settings_view import settings_view
 from constants import WHITE, RED, BLUE, WIDTH, HEIGHT, screen, font, manager
 from credits_view import credits_view
 from buttons import create_buttons
+from custom_game import custom_game_view
 
 pygame.init()
 
@@ -26,8 +27,9 @@ pygame.display.set_caption('Game Menu')
 
 '''
 
-easy_button, medium_button, hard_button, scoreboard_button, settings_button, right_panel, credits_button = create_buttons(
+quick_game_button, custom_game_button, secret_code_button, settings_button, right_panel, credits_button = create_buttons(
     manager)
+
 
 
 def draw_button(surface, rect, text, button_color, text_color):
@@ -93,32 +95,7 @@ def simulate_tile_positions(total_tiles):
     Simulate random tile position to produce random Hamming distance
     """
     return random.sample(range(total_tiles), total_tiles)
-
-
-# Views
-def game_selection_view():
-    screen.fill(WHITE)
-
-    easy_button = pygame.Rect(100, 100, 200, 50)
-    moderate_button = pygame.Rect(100, 200, 200, 50)
-    hard_button = pygame.Rect(100, 300, 200, 50)
-
-    draw_button(screen, easy_button, "Easy", RED, BLUE)
-    draw_button(screen, moderate_button, "Moderate", RED, BLUE)
-    draw_button(screen, hard_button, "Hard", RED, BLUE)
-
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            return {"type": "quit"}
-        elif is_button_clicked(event, easy_button):
-            return {"type": "play_game", "difficulty": "easy"}
-        elif is_button_clicked(event, moderate_button):
-            return {"type": "play_game", "difficulty": "moderate"}
-        elif is_button_clicked(event, hard_button):
-            return {"type": "play_game", "difficulty": "hard"}
-
-    return {"type": "game_selection"}
-
+#Views
 
 def play_game(difficulty):
     screen.fill(WHITE)
@@ -134,10 +111,15 @@ def play_game(difficulty):
     clock = pygame.time.Clock()
     counter = 0
 
+    completion_bar = pygame_gui.elements.UIProgressBar(relative_rect=pygame.Rect((50, 500, 700, 20)),
+                                                       manager=manager)
+
     while True:
+        time_delta = clock.tick(60) / 1000.0
         for event in pygame.event.get():
             if event.type == QUIT:
                 return {"type": "quit"}
+            manager.process_events(event)
 
         # Every 3 seconds, simulate a new tile position to change the completion percentage
         if counter % 90 == 0:
@@ -148,16 +130,21 @@ def play_game(difficulty):
         distance = hamming_distance(tiles_positions, solution_tiles_positions)
         completion_percent = 1 - (distance / len(tiles_positions))
 
+        completion_bar.set_current_progress(completion_percent * 100)
+
+        manager.update(time_delta=time_delta)
+
         # Clear the screen for fresh drawing
         screen.fill(WHITE)
+        manager.draw_ui(screen)
 
-        # Draw the completion bar
-        bar_position = (50, 500)
-        bar_size = (700, 20)
-        draw_completion_bar(screen, completion_percent, bar_position, bar_size)
+
 
         pygame.display.flip()
         clock.tick(30)  # Run the loop at 30 FPS
+
+
+
 
 
 def menu_view():
@@ -171,14 +158,14 @@ def menu_view():
                 return {"type": "quit"}
             if event.type == pygame.USEREVENT:
                 if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == easy_button:
+                    if event.ui_element == quick_game_button:
                         return {"type": "play_game", "difficulty": "easy"}
-                    if event.ui_element == medium_button:
-                        return {"type": "play_game", "difficulty": "medium"}
-                    if event.ui_element == hard_button:
+                    if event.ui_element == custom_game_button:
+                        custom_game_view()
+                    if event.ui_element == secret_code_button:
                         return {"type": "play_game", "difficulty": "hard"}
                     if event.ui_element == settings_button:
-                        return {"type": "settings"}
+                        settings_view()
                     if event.ui_element == credits_button:
                         return {"type": "credits"}
 
@@ -198,7 +185,6 @@ def menu():
     current_difficulty = None
     view_functions = {
         "menu": menu_view,
-        "game_selection": game_selection_view,
         "settings": settings_view,
         "credits": credits_view,
     }

@@ -9,24 +9,19 @@ right_edge = WIDTH - button_width
 
 def create_buttons(manager):
 
-    easy_button = pygame_gui.elements.UIButton(
+    quick_game_button = pygame_gui.elements.UIButton(
         relative_rect=pygame.Rect((right_edge - 50, 83), (button_width, button_height)),
-        text="Easy",
+        text="Quick",
         manager=manager
     )
-    medium_button = pygame_gui.elements.UIButton(
+    custom_game_button = pygame_gui.elements.UIButton(
         relative_rect=pygame.Rect((right_edge - 50, 166), (button_width, button_height)),
-        text="Medium",
+        text="Custom",
         manager=manager
     )
-    hard_button = pygame_gui.elements.UIButton(
+    secret_code_button = pygame_gui.elements.UIButton(
         relative_rect=pygame.Rect((right_edge - 50, 249), (button_width, button_height)),
-        text="Hard",
-        manager=manager
-    )
-    scoreboard_button = pygame_gui.elements.UIButton(
-        relative_rect=pygame.Rect((right_edge - 50, 332), (button_width, button_height)),
-        text="Scoreboard",
+        text="Secret Code",
         manager=manager
     )
     settings_button = pygame_gui.elements.UIButton(
@@ -44,4 +39,4 @@ def create_buttons(manager):
         starting_height=0,
         manager=manager
     )
-    return easy_button, medium_button, hard_button, scoreboard_button, settings_button, right_panel, credits_button
+    return quick_game_button, custom_game_button, secret_code_button, settings_button, right_panel, credits_button
