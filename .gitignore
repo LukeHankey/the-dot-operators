@@ -12,7 +12,7 @@ env
 .coverage*
 
 # Logs
-*.log
+*.log*
 .token.json
 
 # PyEnv version selector
