@@ -1,7 +1,6 @@
 from collections.abc import Callable
 
 import numpy as np
-from fcolor import palette_builder
 from numpy import int64, random
 from numpy.typing import NDArray
 from PIL import Image, ImageDraw

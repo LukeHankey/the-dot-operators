@@ -4,7 +4,6 @@ import tkinter as tk
 from tkinter import filedialog
 
 import pygame_gui
-from client.constants import BLUE, HEIGHT, WHITE, WIDTH, font, manager, screen
 from pygame import QUIT, Rect, quit
 from pygame.event import Event
 from pygame.locals import USEREVENT
