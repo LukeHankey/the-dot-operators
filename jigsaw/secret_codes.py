@@ -9,7 +9,6 @@ from PIL.ImageDraw import Draw
 from PIL.ImageFont import truetype
 
 NUM_OF_TILES = 3200
-FONT_NAME = "DejaVuSans-ExtraLight.ttf"
 
 
 def insert_newline_in_centered_space(string: str) -> str:
@@ -35,11 +34,18 @@ def insert_newline_in_centered_space(string: str) -> str:
 def fitted_text_mask(image: Image, text: str) -> Image:
     """Write text to the image that fits to the edges"""
     image = deepcopy(image)  # deepcopy to prevent modifying the original
-    font_size = 1
     width, height = image.size
 
+    font_size = 1
+    font_name = "DejaVuSans-ExtraLight.ttf"
+
+    try:
+        truetype(font_name, size=font_size)
+    except OSError:
+        font_name = "arial.ttf"
+
     text_parameters = {  # default parameters for `multiline_textbbox`
-        "font": truetype(FONT_NAME, size=font_size),
+        "font": truetype(font_name, size=font_size),
         "anchor": None,
         "spacing": 32,
         "align": "center",
@@ -53,7 +59,7 @@ def fitted_text_mask(image: Image, text: str) -> Image:
 
     while text_width < width and text_height < height:
         font_size += 1
-        text_parameters["font"] = truetype(FONT_NAME, font_size)
+        text_parameters["font"] = truetype(font_name, font_size)
         *_, text_width, text_height = draw.multiline_textbbox(
             (0, 0), text, **text_parameters
         )
@@ -67,8 +73,7 @@ def fitted_text_mask(image: Image, text: str) -> Image:
 
     # decrement as we have gone to far then draw the text for real
     font_size -= 1
-    text_parameters["font"] = truetype(FONT_NAME, font_size)
-
+    text_parameters["font"] = truetype(font_name, font_size)
     draw = Draw(image)
     draw.text((0, 0), text, "white", **text_parameters)
 
