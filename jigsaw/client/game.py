@@ -51,7 +51,7 @@ class GameClient:
                     if self.jigsaw.rect.collidepoint(mouse_position):
                         self.jigsaw.mouse_down(self.tiles, mouse_position)
                 if e.type == MOUSEBUTTONUP:
-                    self.jigsaw.mouse_up(self.tiles, mouse_position)
+                    self.jigsaw.mouse_up(self.tiles)
                 if e.type == MOUSEMOTION:
                     self.jigsaw.mouse_motion(self.tiles, mouse_position)
                 if e.type == VIDEORESIZE:
