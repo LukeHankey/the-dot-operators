@@ -4,8 +4,11 @@
 from io import BytesIO
 from json import dump, load, loads
 from math import sqrt
+<<<<<<< HEAD
 from operator import itemgetter
+=======
 from os import path
+>>>>>>> fc2b7f423d7daba79028c076b5fcedaad67e228c
 from random import shuffle
 
 from google.auth.transport.requests import Request
@@ -110,6 +113,7 @@ def hamming_distance(sequence_0, sequence_1):
 
 
 def tile_scrambler(
+<<<<<<< HEAD
     tiles: list[tuple[int, int], Image]
 ) -> list[tuple[tuple[int, int], Image]]:
     """Extract out the positions to shuffle then add back in"""
@@ -119,4 +123,13 @@ def tile_scrambler(
     shuffle(new_positions)
     while hamming_distance(new_positions, positions) != length:
         shuffle(new_positions)
-    return zip(new_positions, map(itemgetter(1), tiles))
+    return zip(positions, map(itemgetter(1), tiles))
+=======
+    tiles: dict[tuple[int, int], Image.Image]
+) -> list[tuple[tuple[int, int], Image.Image]]:
+    """Extract out the positions to shuffle then add back in"""
+    # extract out the positions to shuffle then add back in
+    positions = list(tiles)
+    shuffle(positions)
+    return zip(positions, tiles.values())
+>>>>>>> fc2b7f423d7daba79028c076b5fcedaad67e228c

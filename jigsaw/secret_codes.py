@@ -80,7 +80,7 @@ def filter_tiles(
     no tile here, skip, move to next tile
     """
     for (_, stile), (np, ntile) in zip(text_tiles, normal_tiles):
-        if not difference(stile, ntile).getbbox():
+        if not difference(stile[1], ntile[1]).getbbox():
             yield (np, ntile)
         else:
             yield (np, None)
