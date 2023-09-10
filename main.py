@@ -1,4 +1,3 @@
-#!/usr/bin/venv python3
 """This the main entry point"""
 
 from json import dump, load
@@ -6,9 +5,9 @@ from os import listdir
 from os.path import exists, join, split
 from random import choice
 
-from client import GameClient
-from tessellation import generate_tiles
-from utils import get_image, tile_scrambler
+from jigsaw.client import GameClient
+from jigsaw.tessellation import generate_tiles
+from jigsaw.utils import get_image, tile_scrambler
 
 LOG_FILENAME = ".log.json"
 
@@ -24,10 +23,10 @@ DEFAULT_OVERLAP = 0.25
 MIN_TILE_NUMBER = 16
 DEFAULT_TILE_NUMBER = 36
 
-path = join(split(__file__)[0], "images")
+path = join(split(__file__)[0], "jigsaw/images")
 filename = choice(
     [  # get a random image on each game run
-        f"images/{filename}" for filename in listdir(path)
+        f"jigsaw/images/{filename}" for filename in listdir(path)
     ]
 )
 filename = join(split(__file__)[0], filename)
