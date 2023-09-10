@@ -2,7 +2,7 @@ from colorsys import hsv_to_rgb, rgb_to_hsv
 from random import randint, random
 
 
-def low_saturation(red, green, blue):
+def low_saturation(red: int, green: int, blue: int) -> bool:
     """Is this color a low saturation value threshould .1"""
     return rgb_to_hsv(red / 255, green / 255, blue / 255)[1] < 0.1
 
