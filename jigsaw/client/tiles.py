@@ -55,17 +55,6 @@ class Tile(sprite.Sprite):
 
         return True
 
-    def is_within_image(self, coord: tuple[int, int]) -> bool:
-        """Checks if the given coordinates are within the visible part of the tile"""
-        local_x = coord[0] - self.rect.topleft[0]
-        local_y = coord[1] - self.rect.topleft[1]
-        if (
-            0 < local_x < self.image.get_width()
-            and 0 < local_y < self.image.get_height()
-        ):
-            return self.image.get_at((local_x, local_y))[3] != 0
-        return False
-
 
 class JigSawTiles(sprite.Group):
     """Inheritance for the addition of Group methods concerning active tiles"""
