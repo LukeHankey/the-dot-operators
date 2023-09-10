@@ -50,7 +50,7 @@ class CreditsView:
                     return False
         return True
 
-    def show(self):
+    def show(self) -> None:
         self.credit_text_box.show()
         self.back_button.show()
 
