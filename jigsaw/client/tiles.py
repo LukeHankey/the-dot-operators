@@ -1,7 +1,7 @@
 from typing import Literal
 
 from PIL.Image import Image
-from pygame import image, sprite
+from pygame import Rect, Surface, image, sprite
 
 
 class Tile(sprite.Sprite):
@@ -12,16 +12,18 @@ class Tile(sprite.Sprite):
     """
 
     def __init__(
-        self: sprite.Sprite,
+        self,
         pos: tuple[int, int],
         overlap: float,
         tile: tuple[tuple[int, int], Image],
     ) -> None:
         """Basic init method that takes pillow image into pygame image"""
         super().__init__()
-        self.image = image.fromstring(tile[1].tobytes(), tile[1].size, tile[1].mode)
+        self.image: Surface = image.fromstring(
+            tile[1].tobytes(), tile[1].size, tile[1].mode
+        )
         self.correct_position = tile[0]
-        self.rect = self.image.get_rect()
+        self.rect: Rect = self.image.get_rect()
         self.rect.topleft = pos
         self.active = False
         self.drag_offset: tuple[int, int]
@@ -52,6 +54,7 @@ class Tile(sprite.Sprite):
         tmp_coord = list(getattr(self.rect, side))
         tmp_coord[axis] = coord
         setattr(self.rect, side, tuple(tmp_coord))
+
         return True
 
     def is_within_image(self, coord: tuple[int, int]) -> bool:
