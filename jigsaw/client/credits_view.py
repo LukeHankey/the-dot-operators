@@ -1,66 +1,58 @@
-import pygame
+from pygame import font, Rect, quit
 import pygame_gui
 from client.constants import screen, WHITE, BLUE, WIDTH, manager, HEIGHT
-from pygame.locals import QUIT
-
-back_button = pygame_gui.elements.UIButton(
-    relative_rect=pygame.Rect((WIDTH // 2 - 50, HEIGHT - 70), (100, 50)),
-    text="Back",
-    manager=manager,
-    visible=0
-)
+from pygame.locals import QUIT, USEREVENT
 
 
-def credits_view(*_):
-    screen.fill(WHITE)
+class CreditsView:
+    def __init__(self):
+        self.title_font = font.Font(None, 48)
 
-    title_font = pygame.font.Font(None, 48)
-    credits_font = pygame.font.Font(None, 36)
+        self.title = self.title_font.render("Jigsaw Game", True, BLUE)
+        self.contributors = [
+            "@LukeHankey LukeHankey Luke",
+            "@busterbeam busterbeam Nathan Lloyd",
+            "@EarthKiii EarthKiii Jonas Charrier",
+            "@DavidStrootman DavidStrootman David Strootman",
+            "@bartoszkobylinski Bartosz Kobylinski",
+            "Version 0.1.0"
+        ]
+        self.build()
 
-    title = title_font.render("Jigsaw Game", True, BLUE)
-    contributors = [
-        "@LukeHankey LukeHankey Luke",
-        "@busterbeam busterbeam Nathan Lloyd",
-        "@EarthKiii EarthKiii Jonas Charrier",
-        "@DavidStrootman DavidStrootman David Strootman",
-        "@bartoszkobylinski Bartosz Kobylinski",
-        "Version 0.1.0"
-    ]
-
-    back_button.show()
-    clock = pygame.time.Clock()
-    time_delta = 0
-
-    while True:
+    def build(self):
         screen.fill(WHITE)
 
         # Center title in available space
-        title_x = (WIDTH - 200) // 2 - title.get_width() // 2
-        screen.blit(title, (title_x, 50))
+        title_x = (WIDTH - 200) // 2 - self.title.get_width() // 2
+        screen.blit(self.title, (title_x, 50))
 
-        # Center contributors in available space
-        y = 150
-        for line in contributors:
-            text = credits_font.render(line, True, BLUE)
-            text_x = (WIDTH - 200) // 2 - text.get_width() // 2
-            screen.blit(text, (text_x, y))
-            y += 50
+        self.credit_text_box = pygame_gui.elements.UITextBox(
+            relative_rect=Rect((WIDTH // 2 - 160, 70), (320, 200)),
+            manager=manager,
+            html_text=f"<font color='#FFFFFF'>{'<br>'.join(self.contributors)}</body>"
+        )
 
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                back_button.hide()
-                return {"type": "quit"}
-            if event.type == pygame.USEREVENT:
-                if event.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                    if event.ui_element == back_button:
-                        back_button.hide()
-                        return {"type": "menu"}
+        self.back_button = pygame_gui.elements.UIButton(
+            relative_rect=Rect((WIDTH // 2 - 50, HEIGHT // 2 + 60), (100, 50)),
+            text="Back",
+            manager=manager,
+        )
 
-            manager.process_events(event)
+        self.hide()
 
-        manager.update(time_delta)
+    def event_handler(self, e):
+        if e.type == QUIT:
+            quit()
+        if e.type == USEREVENT:
+            if e.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if e.ui_element == self.back_button:
+                    return False
+        return True
 
-        manager.draw_ui(screen)
+    def show(self):
+        self.credit_text_box.show()
+        self.back_button.show()
 
-        pygame.display.update()
-        time_delta = clock.tick(60) / 1000.0
+    def hide(self):
+        self.credit_text_box.hide()
+        self.back_button.hide()

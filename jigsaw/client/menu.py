@@ -1,10 +1,12 @@
 import random
-from pygame import init, draw, Rect, display, time, event, quit
+
 import pygame_gui
-from pygame.locals import QUIT, MOUSEBUTTONDOWN, USEREVENT
-from client.settings_view import SettingsView
+from pygame import init, draw, Rect, display, time, event, quit
+from pygame.locals import QUIT, USEREVENT
+
 from client.constants import WHITE, BLUE, WIDTH, HEIGHT, screen, font, manager
-from client.credits_view import credits_view
+from client.credits_view import CreditsView
+from client.settings_view import SettingsView
 
 init()
 
@@ -25,13 +27,9 @@ pygame.display.set_caption('Game Menu')
 
 '''
 
+
 class PlayGameView:
     pass
-
-
-class CreditsView:
-    pass
-
 
 class Menu:
     def __init__(self):
@@ -42,37 +40,20 @@ class Menu:
         }
         self.active_view = self
         self.clock = time.Clock()
+        self.build()
 
     def build(self):
-        button_width = 100
-        button_height = 50
-        right_edge = WIDTH - button_width
+        button_size = (100, 50)
+        right_edge = WIDTH - button_size[0]
+        count = 83
+        MODES = ["quick", "secret", "settings", "credits"]
+        for mode in MODES:
+            rectangle = Rect((right_edge - 50, count), button_size)
+            button = pygame_gui.elements.UIButton(
+                relative_rect=rectangle, text=mode.title(), manager=manager)
+            count += 83
+            setattr(self, f"{mode}_button", button)
 
-        self.quick_game_button = pygame_gui.elements.UIButton(
-            relative_rect=Rect((right_edge - 50, 83), (button_width, button_height)),
-            text="Quick",
-            manager=manager
-        )
-        self.custom_game_button = pygame_gui.elements.UIButton(
-            relative_rect=Rect((right_edge - 50, 166), (button_width, button_height)),
-            text="Custom",
-            manager=manager
-        )
-        self.secret_code_button = pygame_gui.elements.UIButton(
-            relative_rect=Rect((right_edge - 50, 249), (button_width, button_height)),
-            text="Secret Code",
-            manager=manager
-        )
-        self.settings_button = pygame_gui.elements.UIButton(
-            relative_rect=Rect((right_edge - 50, 415), (button_width, button_height)),
-            text="Settings",
-            manager=manager
-        )
-        self.credits_button = pygame_gui.elements.UIButton(
-            relative_rect=Rect((right_edge - 50, 498), (button_width, button_height)),
-            text="Credits",
-            manager=manager
-        )
         self.right_panel = pygame_gui.elements.UIPanel(
             relative_rect=Rect((WIDTH - 200, 0), (200, HEIGHT)),
             starting_height=0,
@@ -95,38 +76,37 @@ class Menu:
         fill_width = int(size[0] * completion_percent)
         draw.rect(screen, fill_color, (position[0], position[1], fill_width, size[1]))
 
-    def is_button_clicked(self, e, rect):
-        if e.type == MOUSEBUTTONDOWN:
-            return rect.collidepoint(e.pos)
-        return False
-
     def event_handler(self, e):
         if e.type == QUIT:
             quit()
         if e.type == USEREVENT:
             if e.user_type == pygame_gui.UI_BUTTON_PRESSED:
-                if e.ui_element == self.quick_game_button:
+                if e.ui_element == self.quick_button:
                     self.active_view = self.view_instances["play_game"]
-                if e.ui_element == self.secret_code_button:
+                if e.ui_element == self.secret_button:
                     self.active_view = self.view_instances["play_game"]
                 if e.ui_element == self.settings_button:
                     self.active_view = self.view_instances["settings"]
+                    self.active_view.show()
                 if e.ui_element == self.credits_button:
                     self.active_view = self.view_instances["credits"]
+                    self.active_view.show()
+        return True
 
     def mainloop(self):
         while True:
+            screen.fill(WHITE)
             time_delta = self.clock.tick(60) / 1000.0
             for e in event.get():
                 if not self.active_view.event_handler(e):
+                    self.active_view.hide()
                     self.active_view = self
                 manager.process_events(e)
-                manager.draw_ui(screen)
-
+            manager.draw_ui(screen)
             manager.update(time_delta)
-            screen.fill(WHITE)
             display.update()
             display.flip()
+
 
 def hamming_distance(current_positions, correct_positions):
     """Calculate the Hamming distance between the current puzzle positions and the correct positions."""
@@ -185,7 +165,3 @@ def play_game(difficulty):
 
         display.flip()
         clock.tick(30)  # Run the loop at 30 FPS
-
-
-
-
