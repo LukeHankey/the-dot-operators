@@ -1,3 +1,9 @@
 # This file contains all the dependencies for this project to run
 pillow~=10.0.0
 pygame~=2.5.1
+pre-commit~=3.4.0
+scipy~=1.11.2
+numpy~=1.25.2
+requests~=2.31.0
+google-api-python-client~=2.98.0
+google-auth-oauthlib~=1.0.0
