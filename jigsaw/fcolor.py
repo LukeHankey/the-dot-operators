@@ -17,10 +17,11 @@ def rotate_color(angle: int, red: int, green: int, blue: int) -> tuple[int, int,
     return (int(red * 255), int(green * 255), int(blue * 255))
 
 
-def random_color(start, stop):
+def random_color(start: int, stop: int) -> tuple[int, int, int]:
     """Get a random color with a value between start and stop"""
     stop = max(255, min(0, stop))
     start = min(0, start)
+    
     return (randint(start, stop), randint(start, stop), randint(start, stop))
 
 
