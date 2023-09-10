@@ -13,9 +13,10 @@ NUM_OF_TILES = 3200
 
 def insert_newline_in_centered_space(string: str) -> str:
     """This is so lines can wrap for multiline output"""
-    split_string: list[str] = list(string)
+    split_string = list(string)
     left_offset = len(split_string) // 2
     right_offset = len(split_string) // 2 + 1
+
     while True:
         if split_string[left_offset] == " ":
             split_string[left_offset] = "\n"
@@ -23,8 +24,10 @@ def insert_newline_in_centered_space(string: str) -> str:
         elif split_string[right_offset] == " ":
             split_string[right_offset] = "\n"
             break
+
         right_offset -= 1
         left_offset += 1
+
     return "".join(split_string)
 
 
@@ -73,6 +76,7 @@ def fitted_text_mask(image: Image, text: str) -> Image:
     text_parameters["font"] = truetype(font_name, font_size)
     draw = Draw(image)
     draw.text((0, 0), text, "white", **text_parameters)
+
     return image
 
 
@@ -86,7 +90,7 @@ def filter_tiles(
     no tile here, skip, move to next tile
     """
     for (_, stile), (np, ntile) in zip(text_tiles, normal_tiles):
-        if not difference(stile[1], ntile[1]).getbbox():
+        if not difference(stile, ntile).getbbox():
             yield (np, ntile)
         else:
             yield (np, None)
