@@ -25,10 +25,11 @@ def random_color(start: int, stop: int) -> tuple[int, int, int]:
     return (randint(start, stop), randint(start, stop), randint(start, stop))
 
 
-def complementary_color(red, green, blue):
+def complementary_color(red: int, green: int, blue: int) -> tuple[int, int, int]:
     """Return the opposite color on the color wheel"""
     hue, *sv = rgb_to_hsv(red / 255, green / 255, blue / 255)
     red, green, blue = hsv_to_rgb(((hue * 360 + 180) % 360) / 360, *sv)
+    
     return (int(red * 255), int(green * 255), int(blue * 255))
 
 
