@@ -33,7 +33,7 @@ def complementary_color(red: int, green: int, blue: int) -> tuple[int, int, int]
     return (int(red * 255), int(green * 255), int(blue * 255))
 
 
-def split_complementary(red, green, blue):
+def split_complementary(red: int, green: int, blue: int) -> list[tuple[int, int, int]]:
     """Return the opposite with 2 other colors 15d eitherside"""
     hue, *sv = rgb_to_hsv(red / 255, green / 255, blue / 255)
 
@@ -53,12 +53,12 @@ def split_complementary(red, green, blue):
     ]
 
 
-def analogue_palette(hue, saturation, value, offset):
+def analogue_palette(hue: float, saturation: float, value: float, offset: float) -> tuple[float, float, float]:
     """Return the the rgb for this analogue modified color"""
     return hsv_to_rgb(((hue + offset) % 360) / 360, saturation, value)
 
 
-def monochrome_palette(hue, saturation, value, _):
+def monochrome_palette(hue: float, saturation: float, value: float, _: float) -> tuple[float, float, float]:
     """Return the the rgb for this monochrome modified color"""
     return hsv_to_rgb(
         max(0, min(hue + (random() - 0.5) * 0.05, 1)),
@@ -67,7 +67,7 @@ def monochrome_palette(hue, saturation, value, _):
     )
 
 
-def palette_builder(count, palette, _sorted):
+def palette_builder(count: int, palette: Callable[[float, float, float, float], tuple[float, float, float]], _sorted: bool) -> Callable[[int, int, int], list[tuple[int, int, int]]]:
     """Returns function to create palette's
 
     count is how many colors this should return
@@ -75,14 +75,17 @@ def palette_builder(count, palette, _sorted):
     __sorted, is by value, (brightness)
     """
 
-    def function(red, green, blue):
+    def function(red: int, green: int, blue: int) -> list[tuple[int, int, int]]:
         hue, *sv = rgb_to_hsv(red / 255, green / 255, blue / 255)
         colors = []
+        
         for index in range(count):
             red, green, blue = palette(hue, *sv, (360 / count) * index)
             colors.append((int(red * 255), int(green * 255), int(blue * 255)))
+            
         if _sorted:
             colors.sort(key=lambda x: rgb_to_hsv(*x)[2])
+            
         return colors[::-1]
 
     return function
