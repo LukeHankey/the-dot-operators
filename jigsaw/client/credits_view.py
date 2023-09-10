@@ -15,6 +15,7 @@ class CreditsView:
             "@EarthKiii EarthKiii Jonas Charrier",
             "@DavidStrootman DavidStrootman David Strootman",
             "@bartoszkobylinski Bartosz Kobylinski",
+            "@chuchumuru Pilogic",
             "Version 0.1.0"
         ]
         self.build()
