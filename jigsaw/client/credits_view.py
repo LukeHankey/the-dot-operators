@@ -7,7 +7,7 @@ from pygame.locals import QUIT, USEREVENT
 class CreditsView:
     """Credits view"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.title_font = font.Font(None, 48)
 
         self.title = self.title_font.render("Jigsaw Game", True, BLUE)
@@ -17,7 +17,8 @@ class CreditsView:
             "@EarthKiii EarthKiii Jonas Charrier",
             "@DavidStrootman DavidStrootman David Strootman",
             "@bartoszkobylinski Bartosz Kobylinski",
-            "Version 0.1.0",
+            "@chuchumuru Pilogic",
+            "Version 0.1.0"
         ]
         self.build()
 
@@ -52,8 +53,8 @@ class CreditsView:
                 if e.ui_element == self.back_button:
                     return False
         return True
-
-    def show(self):
+        
+    def show(self) -> None:
         """Shows the view"""
         self.credit_text_box.show()
         self.back_button.show()
