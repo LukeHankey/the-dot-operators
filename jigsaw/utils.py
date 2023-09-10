@@ -6,8 +6,8 @@ from io import BytesIO
 from json import dump, load, loads
 from math import sqrt
 from operator import itemgetter
-from os import path
-from random import shuffle
+from os import listdir, path
+from random import choice, randint, shuffle
 from typing import Any, cast
 
 from google.auth.transport.requests import Request
@@ -15,6 +15,15 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from PIL import Image
 from requests import get
+
+from .fcolor import (
+    analogue_palette,
+    complementary_color,
+    low_saturation,
+    monochrome_palette,
+    rotate_color,
+)
+from .modifier import backing
 
 SCOPES = ["https://www.googleapis.com/auth/photoslibrary.readonly"]
 BASE_URL = "https://photoslibrary.googleapis.com/v1/"
@@ -122,6 +131,57 @@ def get_image(
     with Image.open(filename) as image:
         image.thumbnail(max_dimensions)
         return fit(image, num_of_tiles)
+
+
+def rotate_image_color(image: Image.Image) -> Image.Image:
+    """Rotate colour wheel on all pixels by fixed a random amount"""
+    image = image.copy().convert("RGBA")
+    angle = randint(0, 180)
+
+    for x in range(image.width):
+        for y in range(image.height):
+            pixel = image.getpixel((x, y))
+            image.putpixel((x, y), (*rotate_color(angle, *pixel[:3]), pixel[3]))
+
+    return image
+
+
+def most_common_color(image: Image.Image) -> tuple[int, int, int]:
+    """Find the most common colour on the image through getcolors"""
+    common_colors = image.getcolors(image.size[0] * image.size[1])
+    common_colors = list(filter(lambda x: x[1][3], common_colors))
+    common_colors.sort()
+
+    return common_colors[-1][1][:3]
+
+
+def get_generated_image(max_size: tuple[int, int], num_of_tiles: int) -> Image.Image:
+    """For internal images
+
+    uses logos and puts it onto a voronoi background after spinning its
+    color wheel
+    """
+    with Image.open("images/" + choice(listdir("images"))) as image:
+        image.thumbnail(max_size, Image.Resampling.LANCZOS)
+        image = fit(image, num_of_tiles)
+
+    image = rotate_image_color(image)
+    seed_color = complementary_color(*most_common_color(image))
+
+    if low_saturation(*seed_color):
+        palette_function = monochrome_palette
+    else:
+        palette_function = choice([analogue_palette, monochrome_palette])
+
+    background = backing(
+        int(max_size[0] * 1.1), int(max_size[1] * 1.1), seed_color, palette_function
+    )
+
+    x_offset = (background.width - image.width) // 2
+    y_offset = (background.height - image.height) // 2
+
+    background.alpha_composite(image, (x_offset, y_offset))
+    return background
 
 
 def hamming_distance(
