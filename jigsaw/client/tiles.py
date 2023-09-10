@@ -15,14 +15,12 @@ class Tile(sprite.Sprite):
         self,
         pos: tuple[int, int],
         overlap: float,
-        tile: tuple[tuple[int, int], Image],
+        tile: Image,
     ) -> None:
         """Basic init method that takes pillow image into pygame image"""
         super().__init__()
-        self.image: Surface = image.fromstring(
-            tile[1].tobytes(), tile[1].size, tile[1].mode
-        )
-        self.correct_position = tile[0]
+        self.image: Surface = image.fromstring(tile.tobytes(), tile.size, tile.mode)
+        self.correct_position = pos
         self.rect: Rect = self.image.get_rect()
         self.rect.topleft = pos
         self.active = False
