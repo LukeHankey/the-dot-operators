@@ -137,12 +137,12 @@ def rotate_image_color(image: Image.Image) -> Image.Image:
     """Rotate colour wheel on all pixels by fixed a random amount"""
     image = image.copy().convert("RGBA")
     angle = randint(0, 180)
-    
+
     for x in range(image.width):
         for y in range(image.height):
             pixel = image.getpixel((x, y))
             image.putpixel((x, y), (*rotate_color(angle, *pixel[:3]), pixel[3]))
-            
+
     return image
 
 
@@ -151,7 +151,7 @@ def most_common_color(image: Image.Image) -> tuple[int, int, int]:
     common_colors = image.getcolors(image.size[0] * image.size[1])
     common_colors = list(filter(lambda x: x[1][3], common_colors))
     common_colors.sort()
-    
+
     return common_colors[-1][1][:3]
 
 
@@ -164,22 +164,22 @@ def get_generated_image(max_size: tuple[int, int], num_of_tiles: int) -> Image.I
     with Image.open("images/" + choice(listdir("images"))) as image:
         image.thumbnail(max_size, Image.Resampling.LANCZOS)
         image = fit(image, num_of_tiles)
-        
+
     image = rotate_image_color(image)
     seed_color = complementary_color(*most_common_color(image))
-    
+
     if low_saturation(*seed_color):
         palette_function = monochrome_palette
     else:
         palette_function = choice([analogue_palette, monochrome_palette])
-        
+
     background = backing(
         int(max_size[0] * 1.1), int(max_size[1] * 1.1), seed_color, palette_function
     )
-    
+
     x_offset = (background.width - image.width) // 2
     y_offset = (background.height - image.height) // 2
-    
+
     background.alpha_composite(image, (x_offset, y_offset))
     return background
 
