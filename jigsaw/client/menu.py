@@ -1,19 +1,17 @@
 import random
-
 from typing import Literal, NoReturn
+
 import pygame_gui
-from pygame import init, draw, Rect, display, time, event, quit
-from pygame.locals import QUIT, USEREVENT
+from pygame import Rect, display, draw, event, init, quit, time
 from pygame.event import Event
+from pygame.locals import QUIT, USEREVENT
 
-from client.constants import WHITE, WIDTH, HEIGHT, screen, manager
-from client.credits_view import CreditsView
-from client.settings_view import SettingsView
-
-
-from client import GameClient
-from tessellation import generate_tiles
-from utils import get_image, tile_scrambler
+from ..tessellation import generate_tiles
+from ..utils import get_image, tile_scrambler
+from . import GameClient
+from .constants import HEIGHT, WHITE, WIDTH, manager, screen
+from .credits_view import CreditsView
+from .settings_view import SettingsView
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 SCREEN_DIMENSIONS = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -42,10 +40,10 @@ class Menu:
     def build(self) -> None:
         button_size = (100, 50)
         right_edge = WIDTH - button_size[0]
-        
+
         count = 83
         MODES = ["quick", "secret", "settings", "credits"]
-        
+
         for mode in MODES:
             rectangle = Rect((right_edge - 50, count), button_size)
             button = pygame_gui.elements.UIButton(
@@ -57,12 +55,17 @@ class Menu:
         self.right_panel = pygame_gui.elements.UIPanel(
             relative_rect=Rect((WIDTH - 200, 0), (200, HEIGHT)),
             starting_height=0,
-            manager=manager
+            manager=manager,
         )
 
-    def draw_completion_bar(self, completion_percent: float, position: tuple[int, int], size: tuple[int, int]) -> None:
-        """ Draws a completion bar on the screen.
-        
+    def draw_completion_bar(
+        self,
+        completion_percent: float,
+        position: tuple[int, int],
+        size: tuple[int, int],
+    ) -> None:
+        """Draws a completion bar on the screen.
+
         Args:
             screen (pygame.Surface): The surface to draw on.
             completion_percent (float): The completion percentage (0.0.to 1.0)
@@ -112,7 +115,10 @@ class Menu:
 
 def hamming_distance(current_positions: list[int], correct_positions: list[int]) -> int:
     """Calculate the Hamming distance between the current puzzle positions and the correct positions."""
-    return sum(current != correct for current, correct in zip(current_positions, correct_positions))
+    return sum(
+        current != correct
+        for current, correct in zip(current_positions, correct_positions)
+    )
 
 
 def simulate_tile_positions(total_tiles: int) -> list[int]:

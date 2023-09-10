@@ -5,7 +5,7 @@ from os import listdir
 from os.path import exists, join, split
 from random import choice
 
-from client.menu import Menu
+from jigsaw.client.menu import Menu
 
 LOG_FILENAME = ".log.json"
 
@@ -22,4 +22,3 @@ menu.mainloop()
 
 with open(LOG_FILENAME, "w") as log_file:
     dump(game_log, log_file, indent=1)
-
