@@ -1,4 +1,3 @@
-from collections.abc import Generator
 from math import sqrt
 
 from PIL.Image import Image
@@ -7,7 +6,7 @@ from PIL.Image import Image
 def generate_tiles(
     image: Image,
     num_of_tiles: int,
-) -> Generator[tuple[tuple[int, int], Image], None, None]:
+) -> list[tuple[tuple[int, int], Image]]:
     """Opens image file and splits it into tiles and shuffles them"""
     num_of_tiles = int(sqrt(num_of_tiles))
     tiles = list()
@@ -18,5 +17,6 @@ def generate_tiles(
     for x in range(0, image.width, width):
         for y in range(0, image.height, height):
             bbox = (x, y, x + width, y + height)
-            tiles.append(((x, y), ((x, y), image.crop(bbox))))
+            tiles.append(((x, y), image.crop(bbox)))
+
     return tiles
