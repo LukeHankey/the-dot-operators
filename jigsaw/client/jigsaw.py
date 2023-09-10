@@ -1,5 +1,3 @@
-from typing import NoReturn
-
 from pygame import Rect, Surface
 
 from .tiles import JigSawTiles, Tile
@@ -56,19 +54,17 @@ class JigSaw(Surface):
             return tile.snap("bottomright", check_tile.rect.topleft[side], side)
         return False
 
-    def mouse_down(
-        self, tiles: JigSawTiles, mouse_position: tuple[int, int]
-    ) -> NoReturn:
+    def mouse_down(self, tiles: JigSawTiles, mouse_position: tuple[int, int]) -> None:
         """Handler for if mouse press down in jigsaw surface"""
         # [::-1] reverse list check is downwards in z depth
         for tile in tiles.sprites()[::-1]:
-            if tile.rect.collidepoint(self.translate(mouse_position)):
+            if tile.is_within_image(self.translate(mouse_position)):
                 tiles.remove(tile)
                 tiles.add(tile)  # reorder to top
                 tile.activate(mouse_position)
-                break
+                return None
 
-    def mouse_up(self, tiles: JigSawTiles, mouse_position: tuple[int, int]) -> NoReturn:
+    def mouse_up(self, tiles: JigSawTiles) -> None:
         """Handler for if mouse press release in jigsaw surface"""
         active_tile = tiles.get_active()
 
@@ -97,9 +93,7 @@ class JigSaw(Surface):
                     v_snapped = self.tile_check_snap(BOTTOM, active_tile, check_tile)
         active_tile.deactivate()
 
-    def mouse_motion(
-        self, tiles: JigSawTiles, mouse_position: tuple[int, int]
-    ) -> NoReturn:
+    def mouse_motion(self, tiles: JigSawTiles, mouse_position: tuple[int, int]) -> None:
         """Handler for if mouse moving on jigsaw surface"""
         for tile in tiles.sprites()[::-1]:
             if tile.active:
