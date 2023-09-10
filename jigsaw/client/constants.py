@@ -13,5 +13,4 @@ screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Game Menu')
 
 font = pygame.font.SysFont(None, 36)  # Default font, size 36
-overlap_sensitivity = 5
 manager = pygame_gui.UIManager((WIDTH, HEIGHT))

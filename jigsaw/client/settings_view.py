@@ -5,14 +5,17 @@ import pygame_gui
 from pygame import QUIT
 import tkinter as tk
 from tkinter import filedialog
+
+from pygame.locals import USEREVENT
+
 from client.constants import screen, WHITE, BLUE, font, WIDTH, HEIGHT, manager
 
 
 class SettingsView:
     def __init__(self):
-        self.settings = {}
-        self.selected_file = None
+        self.settings = {"fullscreen": False, "overlap": 0.25, "image": ""}
         self.title = font.render("Settings", True, BLUE)
+        self.build()
 
     def build(self):
         screen.fill(WHITE)
@@ -58,6 +61,8 @@ class SettingsView:
             container=self.settings_panel
         )
 
+        self.settings_panel.hide()
+
     def open_file_dialog(self):
         if sys.platform in ['linux', 'darwin']:
             self.selected_file = os.popen('zenity --file-selection').read().strip()
@@ -69,17 +74,23 @@ class SettingsView:
     def event_handler(self, e):
         if e.type == QUIT:
             quit()
-        if e.type == pygame_gui.UI_BUTTON_PRESSED:
-            if e.ui_element == self.fullscreen_button:
-                self.settings["fullscreen"] = not self.settings["fullscreen"]
-                self.fullscreen_button.set_text("Fullscreen" if not self.settings['fullscreen'] else "Windowed")
-            if e.ui_element == self.open_file_button:
-                self.open_file_dialog()
-                if self.selected_file:
-                    print(f"File selected: {self.selected_file}")
+        if e.type == USEREVENT:
+            if e.user_type == pygame_gui.UI_BUTTON_PRESSED:
+                if e.ui_element == self.fullscreen_button:
+                    self.settings["fullscreen"] = not self.settings["fullscreen"]
+                    self.fullscreen_button.set_text("Fullscreen" if not self.settings['fullscreen'] else "Windowed")
+                if e.ui_element == self.open_file_button:
+                    self.open_file_dialog()
+                    if self.settings["image"]:
+                        print(f'File selected: {self.settings["image"]}')
 
-            if e.ui_element == self.back_button:
-                self.settings_panel.hide()
-                return False
-            return True
+                if e.ui_element == self.back_button:
+                    self.hide()
+                    return False
+        return True
 
+    def show(self):
+        self.settings_panel.show()
+
+    def hide(self):
+        self.settings_panel.hide()
