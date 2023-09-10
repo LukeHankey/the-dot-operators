@@ -2,6 +2,7 @@
 """Core Image Manipulation functionality"""
 
 from math import sqrt
+from operator import itemgetter
 from random import shuffle
 
 from PIL.Image import Image, open
@@ -22,11 +23,19 @@ def get_image(
     return image
 
 
+def hamming_distance(sequence_0, sequence_1):
+    """Find the distance between the solution and the scrambled"""
+    return sum(x != y for x, y in zip(sequence_0, sequence_1))
+
+
 def tile_scrambler(
-    tiles: dict[tuple[int, int], Image]
+    tiles: list[tuple[int, int], Image]
 ) -> list[tuple[tuple[int, int], Image]]:
     """Extract out the positions to shuffle then add back in"""
-    # extract out the positions to shuffle then add back in
-    positions = list(tiles)
-    shuffle(positions)
-    return zip(positions, tiles.values())
+    positions = list(map(itemgetter(0), tiles))
+    length = len(positions)
+    new_positions = positions[:]
+    shuffle(new_positions)
+    while hamming_distance(new_positions, positions) != length:
+        shuffle(new_positions)
+    return zip(positions, map(itemgetter(1), tiles))
