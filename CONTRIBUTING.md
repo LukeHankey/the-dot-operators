@@ -5,7 +5,7 @@
 Once you have cloned the repository you should then create a virtual environment to seperate this project from affecting any projects you are currently working on, on your system.  To create and start the virtual environment
 
     $ python -m venv .venv
-    # 
+    #
     # Linux, Bash
     $ source .venv/bin/activate
     # Linux, Fish
@@ -21,6 +21,9 @@ Once you have cloned the repository you should then create a virtual environment
     # Then we want to install our dependacies
     $ pip install -r requirements.txt
 
+    # The install pre-commit
+    $ pre-commit install
+
 This next step can be done anywhen before committing/submitting which is to make a branch.  What are yo going to work on?
 
     $ git checkout [available_branch_name]
@@ -31,9 +34,8 @@ This next step can be done anywhen before committing/submitting which is to make
 
 So you have added `print("Hello, World!)` to a file well done, now let us check if you have maintained to our style guide and formatting
 
-    $ git add . # to stage it to pre-commit
-    $ pre-commit
-    #
+    $ git add . # to stage it
+    $ pre-commit run --all-files
     # this will do all the checks if you want to do a smaller subset
     $ autoflake8 -i .  # is a quicker check
 
@@ -53,7 +55,7 @@ You start by staging
 Then you commit with a message either by `-m` flag like this
 
     $ git commit -m "A brief summary of the commit
-    > 
+    >
     > A paragraph describing what changed and its impact."
 
 But you can do without the flag and your system default text editor should open
