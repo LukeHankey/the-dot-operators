@@ -1,7 +1,9 @@
 import pygame_gui
-from client.constants import BLUE, HEIGHT, WHITE, WIDTH, manager, screen
-from pygame import Rect, font, quit
+from pygame import Rect, font
+from pygame.event import Event
 from pygame.locals import QUIT, USEREVENT
+
+from .constants import BLUE, HEIGHT, WHITE, WIDTH, manager, screen
 
 
 class CreditsView:
@@ -44,7 +46,7 @@ class CreditsView:
 
         self.hide()
 
-    def event_handler(self, e):
+    def event_handler(self, e: Event) -> bool:
         """Event handler for the view"""
         if e.type == QUIT:
             quit()
@@ -59,7 +61,7 @@ class CreditsView:
         self.credit_text_box.show()
         self.back_button.show()
 
-    def hide(self):
+    def hide(self) -> None:
         """Hides the view"""
         self.credit_text_box.hide()
         self.back_button.hide()

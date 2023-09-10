@@ -1,14 +1,17 @@
 import random
+from typing import Literal, NoReturn
 
 import pygame_gui
-from client import GameClient
 from client.constants import HEIGHT, WHITE, WIDTH, manager, screen
 from client.credits_view import CreditsView
 from client.settings_view import SettingsView
 from pygame import Rect, display, draw, event, init, quit, time
+from pygame.event import Event
 from pygame.locals import QUIT, USEREVENT
 from tessellation import generate_tiles
 from utils import get_image, tile_scrambler
+
+from .game import GameClient
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
 SCREEN_DIMENSIONS = (SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -36,12 +39,14 @@ class Menu:
         self.clock = time.Clock()
         self.build()
 
-    def build(self):
+    def build(self) -> None:
         """Builds the menu's layout"""
         button_size = (100, 50)
         right_edge = WIDTH - button_size[0]
+
         count = 83
         MODES = ["quick", "secret", "settings", "credits"]
+
         for mode in MODES:
             rectangle = Rect((right_edge - 50, count), button_size)
             button = pygame_gui.elements.UIButton(
@@ -56,7 +61,12 @@ class Menu:
             manager=manager,
         )
 
-    def draw_completion_bar(self, completion_percent, position, size):
+    def draw_completion_bar(
+        self,
+        completion_percent: float,
+        position: tuple[int, int],
+        size: tuple[int, int],
+    ) -> None:
         """Draws a completion bar on the screen.
 
         Args:
@@ -73,7 +83,7 @@ class Menu:
         fill_width = int(size[0] * completion_percent)
         draw.rect(screen, fill_color, (position[0], position[1], fill_width, size[1]))
 
-    def event_handler(self, e):
+    def event_handler(self, e: Event) -> Literal[True]:
         """Event handler for the menu"""
         if e.type == QUIT:
             quit()
@@ -92,7 +102,7 @@ class Menu:
                 self.active_view.show()
         return True
 
-    def mainloop(self):
+    def mainloop(self) -> NoReturn:
         """Main loop for the menu"""
         while True:
             screen.fill(WHITE)
@@ -108,7 +118,7 @@ class Menu:
             display.flip()
 
 
-def hamming_distance(current_positions, correct_positions):
+def hamming_distance(current_positions: list[int], correct_positions: list[int]) -> int:
     """Calculate the Hamming distance between the current puzzle positions and the correct positions."""
     return sum(
         current != correct
@@ -116,7 +126,7 @@ def hamming_distance(current_positions, correct_positions):
     )
 
 
-def simulate_tile_positions(total_tiles):
+def simulate_tile_positions(total_tiles: int) -> list[int]:
     """Simulate random tile position to produce random Hamming distance"""
     return random.sample(range(total_tiles), total_tiles)
 
