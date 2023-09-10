@@ -4,39 +4,34 @@ import pygame_gui
 from pygame import init, draw, Rect, display, time, event, quit
 from pygame.locals import QUIT, USEREVENT
 
-from client.constants import WHITE, BLUE, WIDTH, HEIGHT, screen, font, manager
+from client.constants import WHITE, WIDTH, HEIGHT, screen, manager
 from client.credits_view import CreditsView
 from client.settings_view import SettingsView
 
+
+from client import GameClient
+from tessellation import generate_tiles
+from utils import get_image, tile_scrambler
+
+SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
+SCREEN_DIMENSIONS = (SCREEN_WIDTH, SCREEN_HEIGHT)
+
+MAX_OVERLAP = 0.25
+MIN_OVERLAP = 0.15
+DEFAULT_OVERLAP = 0.25
+
+MIN_TILE_NUMBER = 16
+DEFAULT_TILE_NUMBER = 36
+
 init()
 
-'''
-# Colors
-
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-
-# Screen dimensions
-WIDTH, HEIGHT = 800, 600
-screen = pygame.display.set_mode((WIDTH, HEIGHT))
-font = pygame.font.SysFont(None, 36)  # Default font, size 36
-overlap_sensitivity = 5
-
-pygame.display.set_caption('Game Menu')
-
-'''
-
-
-class PlayGameView:
-    pass
 
 class Menu:
-    def __init__(self):
+    def __init__(self, filename):
         self.view_instances = {
             "settings": SettingsView(),
             "credits": CreditsView(),
-            "play_game": PlayGameView(),
+            "play_game": PlayGameView(filename),
         }
         self.active_view = self
         self.clock = time.Clock()
@@ -82,15 +77,16 @@ class Menu:
         if e.type == USEREVENT:
             if e.user_type == pygame_gui.UI_BUTTON_PRESSED:
                 if e.ui_element == self.quick_button:
+                    self.view_instances["play_game"].num_of_tiles = MIN_TILE_NUMBER
                     self.active_view = self.view_instances["play_game"]
                 if e.ui_element == self.secret_button:
+                    self.view_instances["play_game"].num_of_tiles = DEFAULT_TILE_NUMBER
                     self.active_view = self.view_instances["play_game"]
                 if e.ui_element == self.settings_button:
                     self.active_view = self.view_instances["settings"]
-                    self.active_view.show()
                 if e.ui_element == self.credits_button:
                     self.active_view = self.view_instances["credits"]
-                    self.active_view.show()
+                self.active_view.show()
         return True
 
     def mainloop(self):
@@ -120,48 +116,24 @@ def simulate_tile_positions(total_tiles):
     return random.sample(range(total_tiles), total_tiles)
 
 
-# Views
+class PlayGameView:
+    def __init__(self, filename):
+        self.filename = filename
+        self.num_of_tiles = None
 
-def play_game(difficulty):
-    screen.fill(WHITE)
-    message = f"You choose {difficulty} mode!"
-    txt = font.render(message, True, BLUE)
+    def event_handler(self, _):
+        return True
 
-    screen.blit(txt, (WIDTH // 2 - txt.get_width() // 2, HEIGHT // 2 - txt.get_height() // 2))
-    display.flip()
-    time.wait(2000)
+    def show(self):
+        image = get_image(self.filename, SCREEN_DIMENSIONS, self.num_of_tiles)
+        correct_tiles = generate_tiles(image, self.num_of_tiles)
 
-    total_tiles = 9
-    solution_tiles_positions = list(range(total_tiles))
-    clock = time.Clock()
-    counter = 0
-
-    completion_bar = pygame_gui.elements.UIProgressBar(relative_rect=Rect((50, 500, 700, 20)),
-                                                       manager=manager)
-
-    while True:
-        time_delta = clock.tick(60) / 1000.0
-        for e in event.get():
-            if e.type == QUIT:
-                return {"type": "quit"}
-            manager.process_events(e)
-
-        # Every 3 seconds, simulate a new tile position to change the completion percentage
-        if counter % 90 == 0:
-            tiles_positions = simulate_tile_positions(total_tiles)
-        counter += 1
-
-        # Calculate completion based on Hamming distance
-        distance = hamming_distance(tiles_positions, solution_tiles_positions)
-        completion_percent = 1 - (distance / len(tiles_positions))
-
-        completion_bar.set_current_progress(completion_percent * 100)
-
-        manager.update(time_delta=time_delta)
-
-        # Clear the screen for fresh drawing
-        screen.fill(WHITE)
-        manager.draw_ui(screen)
-
-        display.flip()
-        clock.tick(30)  # Run the loop at 30 FPS
+        action = {
+            "num_of_tiles": self.num_of_tiles,
+            "image": image,
+            "overlap": DEFAULT_OVERLAP,
+            "solved_tiles": correct_tiles,
+            "scrambled_tiles": tile_scrambler(correct_tiles),
+        }
+        game = GameClient(action)
+        game.mainloop()
