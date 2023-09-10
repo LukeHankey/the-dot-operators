@@ -10,7 +10,7 @@ from client.menu import Menu
 LOG_FILENAME = ".log.json"
 
 game_log = load(open(LOG_FILENAME)) if exists(LOG_FILENAME) else {}
-path = join(split(__file__)[0], "images")
+path = join(split(__file__)[0], "jigsaw/images")
 filename = choice(
     [  # get a random image on each game run
         f"jigsaw/images/{filename}" for filename in listdir(path)

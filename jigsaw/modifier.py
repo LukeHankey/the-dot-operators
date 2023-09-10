@@ -6,7 +6,7 @@ from numpy.typing import NDArray
 from PIL import Image, ImageDraw
 from scipy.spatial import Voronoi
 
-from .fcolor import palette_builder
+from fcolor import palette_builder
 
 CENTERED = True
 UNCENTERED = False

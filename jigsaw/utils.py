@@ -16,14 +16,14 @@ from google_auth_oauthlib.flow import InstalledAppFlow
 from PIL import Image
 from requests import get
 
-from .fcolor import (
+from fcolor import (
     analogue_palette,
     complementary_color,
     low_saturation,
     monochrome_palette,
     rotate_color,
 )
-from .modifier import backing
+from modifier import backing
 
 SCOPES = ["https://www.googleapis.com/auth/photoslibrary.readonly"]
 BASE_URL = "https://photoslibrary.googleapis.com/v1/"
