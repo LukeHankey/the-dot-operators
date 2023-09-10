@@ -7,17 +7,18 @@ import tkinter as tk
 from tkinter import filedialog
 
 from pygame.locals import USEREVENT
+from pygame.event import Event
 
 from client.constants import screen, WHITE, BLUE, font, WIDTH, HEIGHT, manager
 
 
 class SettingsView:
-    def __init__(self):
+    def __init__(self) -> None:
         self.settings = {"fullscreen": False, "overlap": 0.25, "image": ""}
         self.title = font.render("Settings", True, BLUE)
         self.build()
 
-    def build(self):
+    def build(self) -> None:
         screen.fill(WHITE)
         screen.blit(self.title, (WIDTH // 2 - self.title.get_width() // 2, 50))
 
@@ -63,7 +64,7 @@ class SettingsView:
 
         self.settings_panel.hide()
 
-    def open_file_dialog(self):
+    def open_file_dialog(self) -> None:
         if sys.platform in ['linux', 'darwin']:
             self.selected_file = os.popen('zenity --file-selection').read().strip()
         elif sys.platform == 'win32':
@@ -71,7 +72,7 @@ class SettingsView:
             root.withdraw()
             self.selected_file = filedialog.askopenfilename()
 
-    def event_handler(self, e):
+    def event_handler(self, e: Event) -> bool:
         if e.type == QUIT:
             quit()
         if e.type == USEREVENT:
@@ -89,7 +90,7 @@ class SettingsView:
                     return False
         return True
 
-    def show(self):
+    def show(self) -> None:
         self.settings_panel.show()
 
     def hide(self) -> None:
