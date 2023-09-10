@@ -7,11 +7,13 @@ def low_saturation(red: int, green: int, blue: int) -> bool:
     return rgb_to_hsv(red / 255, green / 255, blue / 255)[1] < 0.1
 
 
-def rotate_color(angle, red, green, blue):
+def rotate_color(angle: int, red: int, green: int, blue: int) -> tuple[int, int, int]:
     """Rotate the "hue" value on the color wheel by an angle"""
     hue, *sv = rgb_to_hsv(red / 255, green / 255, blue / 255)
     hue = ((hue * 360 + angle) % 360) / 360
+    
     red, green, blue = hsv_to_rgb(hue, *sv)
+    
     return (int(red * 255), int(green * 255), int(blue * 255))
 
 
