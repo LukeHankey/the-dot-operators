@@ -35,7 +35,7 @@ for filename in listdir(join(split(__file__)[0], "../jigsaw/images")):
 
     # show scrambled
     final = Image.new("RGB", image.size, "white")
-    for pos, (_, tile) in filter(itemgetter(1), tile_scrambler(filtered_tiles)):
+    for pos, tile in filter(itemgetter(1), tile_scrambler(filtered_tiles)):
         bbox = (pos[0], pos[1], pos[0] + tile.width, pos[1] + tile.height)
         final.paste(tile, bbox)
     final.show()
