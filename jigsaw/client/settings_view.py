@@ -103,7 +103,7 @@ class SettingsView:
     def show(self):
         """Shows the view"""
         self.settings_panel.show()
- 
+
     def hide(self) -> None:
         """Hides the view"""
         self.settings_panel.hide()

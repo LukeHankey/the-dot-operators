@@ -18,7 +18,7 @@ class CreditsView:
             "@DavidStrootman DavidStrootman David Strootman",
             "@bartoszkobylinski Bartosz Kobylinski",
             "@chuchumuru Pilogic",
-            "Version 0.1.0"
+            "Version 0.1.0",
         ]
         self.build()
 
@@ -53,7 +53,7 @@ class CreditsView:
                 if e.ui_element == self.back_button:
                     return False
         return True
-        
+
     def show(self) -> None:
         """Shows the view"""
         self.credit_text_box.show()
