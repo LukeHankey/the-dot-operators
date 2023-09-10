@@ -46,9 +46,6 @@ action = {
     "scrambled_tiles": tile_scrambler(correct_tiles),
 }
 
-game = GameClient(action)
-game.mainloop()
-
 with open(LOG_FILENAME, "w") as log_file:
     dump(game_log, log_file, indent=1)
 
