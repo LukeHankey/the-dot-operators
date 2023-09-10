@@ -8,7 +8,6 @@ from random import choice
 
 from client import GameClient
 from tessellation import generate_tiles
-
 from utils import get_image, tile_scrambler
 
 LOG_FILENAME = ".log.json"
