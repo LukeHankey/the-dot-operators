@@ -66,7 +66,7 @@ class JigSaw(Surface):
                 tiles.remove(tile)
                 tiles.add(tile)  # reorder to top
                 tile.activate(mouse_position)
-                break
+                return
 
     def mouse_up(self, tiles: JigSawTiles, mouse_position: tuple[int, int]) -> NoReturn:
         """Handler for if mouse press release in jigsaw surface"""

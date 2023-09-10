@@ -55,7 +55,7 @@ class Tile(sprite.Sprite):
         return True
 
     def is_within_image(self, coord: tuple[int, int]) -> bool:
-        """Checks if the tile is within the image"""
+        """Checks if the given coordinates are within the visible part of the tile"""
         local_x = coord[0] - self.rect.topleft[0]
         local_y = coord[1] - self.rect.topleft[1]
         if (
