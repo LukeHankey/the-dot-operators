@@ -1,18 +1,21 @@
 from os import listdir
 from os.path import join, split
-from random import choice
 
-from jigsaw.tessellation import polygon_tile_splitter, square_grid
-from jigsaw.utils import get_image
+from jigsaw.tessellation import generate_tiles
+from jigsaw.utils import get_image, tile_scrambler
 
 path = join(split(__file__)[0], "../jigsaw/images")
-filename = choice(
-    [  # get a random image on each game run
-        f"../jigsaw/images/{filename}" for filename in listdir(path)
-    ]
-)
-filename = join(split(__file__)[0], filename)
-image = get_image(join(split(__file__)[0], filename), (1000, 1000), 20)
-for points, triangle, tile in polygon_tile_splitter(square_grid, image, 20):
-    print(points)
-    tile.show()
+filenames = [f"../jigsaw/images/{filename}" for filename in listdir(path)]
+
+output = "n" not in input("do you want to output the images? [yes] ")
+num_of_tiles = 25
+
+for filename in filenames:
+    image = get_image(join(split(__file__)[0], filename), (1000, 1000), num_of_tiles)
+    if output:
+        image.show()
+    tiles = generate_tiles(image, num_of_tiles)
+    for pos_0, (pos_1, tile) in tile_scrambler(tiles):
+        print(pos_0, pos_1)
+        if output:
+            tile.show()
