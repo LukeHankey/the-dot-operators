@@ -5,7 +5,7 @@ from pygame.locals import QUIT, USEREVENT
 
 
 class CreditsView:
-    def __init__(self):
+    def __init__(self) -> None:
         self.title_font = font.Font(None, 48)
 
         self.title = self.title_font.render("Jigsaw Game", True, BLUE)
