@@ -9,7 +9,7 @@ CENTERED = True
 UNCENTERED = False
 
 
-def backing(width, height, seed_color, palette_function, from_center_color=UNCENTERED):
+def backing(width, height, seed_color, palette_function, from_center=CENTERED):
     """Returns Voronoi image from dimensions, seed_color and palette_function"""
     x_offset = width // 5
     y_offset = height // 5
@@ -23,30 +23,28 @@ def backing(width, height, seed_color, palette_function, from_center_color=UNCEN
             )
         )
     )
-    image = Image.new("RGB", (x_limit, y_limit), "white")
+    image = Image.new("RGBA", (x_limit, y_limit), "white")
     return voronoi_generator(
         points,
         image,
         (x_offset, y_offset, width, height),
         seed_color,
         palette_function,
-        from_center_color,
+        from_center,
     )
 
 
-def voronoi_generator(
-    points, image, bbox, seed_color, palette_function, from_center_color
-):
+def voronoi_generator(points, image, bbox, seed_color, palette_function, from_center):
     """Voronoi is organic looking cells coloured in a specfic manner"""
     voronoi = Voronoi(points)
     draw = ImageDraw.Draw(image)
     cells = voronoi.regions
-    colors = palette_builder(len(cells), palette_function, from_center_color)
+    colors = palette_builder(len(cells), palette_function, from_center)
     palette = colors(*seed_color)
     for num, cell in enumerate(cells):
         if len(cell) > 0 and -1 not in cell:
             polygon = [tuple(voronoi.vertices[index]) for index in cell]
-            if from_center_color:
+            if from_center:
                 centroid = np.mean(polygon, axis=0)
                 min_distance = min(
                     centroid[0],
