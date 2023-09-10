@@ -1,11 +1,14 @@
-from pygame import font, Rect, quit
 import pygame_gui
-from .constants import screen, WHITE, BLUE, WIDTH, manager, HEIGHT
-from pygame.locals import QUIT, USEREVENT
+from pygame import Rect, font
 from pygame.event import Event
+from pygame.locals import QUIT, USEREVENT
+
+from .constants import BLUE, HEIGHT, WHITE, WIDTH, manager, screen
 
 
 class CreditsView:
+    """Credits view"""
+
     def __init__(self) -> None:
         self.title_font = font.Font(None, 48)
 
@@ -17,11 +20,12 @@ class CreditsView:
             "@DavidStrootman DavidStrootman David Strootman",
             "@bartoszkobylinski Bartosz Kobylinski",
             "@chuchumuru Pilogic",
-            "Version 0.1.0"
+            "Version 0.1.0",
         ]
         self.build()
 
     def build(self):
+        """Builds the view's layout"""
         screen.fill(WHITE)
 
         # Center title in available space
@@ -31,7 +35,7 @@ class CreditsView:
         self.credit_text_box = pygame_gui.elements.UITextBox(
             relative_rect=Rect((WIDTH // 2 - 160, 70), (320, 200)),
             manager=manager,
-            html_text=f"<font color='#FFFFFF'>{'<br>'.join(self.contributors)}</body>"
+            html_text=f"<font color='#FFFFFF'>{'<br>'.join(self.contributors)}</body>",
         )
 
         self.back_button = pygame_gui.elements.UIButton(
@@ -43,6 +47,7 @@ class CreditsView:
         self.hide()
 
     def event_handler(self, e: Event) -> bool:
+        """Event handler for the view"""
         if e.type == QUIT:
             quit()
         if e.type == USEREVENT:
@@ -52,9 +57,11 @@ class CreditsView:
         return True
 
     def show(self) -> None:
+        """Shows the view"""
         self.credit_text_box.show()
         self.back_button.show()
 
     def hide(self) -> None:
+        """Hides the view"""
         self.credit_text_box.hide()
         self.back_button.hide()

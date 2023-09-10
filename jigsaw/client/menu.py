@@ -11,6 +11,7 @@ from ..utils import get_image, tile_scrambler
 from . import GameClient
 from .constants import HEIGHT, WHITE, WIDTH, manager, screen
 from .credits_view import CreditsView
+from .game import GameClient
 from .settings_view import SettingsView
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
@@ -27,6 +28,8 @@ init()
 
 
 class Menu:
+    """Menu view and controller"""
+
     def __init__(self, filename):
         self.view_instances = {
             "settings": SettingsView(),
@@ -38,6 +41,7 @@ class Menu:
         self.build()
 
     def build(self) -> None:
+        """Builds the menu's layout"""
         button_size = (100, 50)
         right_edge = WIDTH - button_size[0]
 
@@ -81,6 +85,7 @@ class Menu:
         draw.rect(screen, fill_color, (position[0], position[1], fill_width, size[1]))
 
     def event_handler(self, e: Event) -> Literal[True]:
+        """Event handler for the menu"""
         if e.type == QUIT:
             quit()
         if e.type == USEREVENT:
@@ -99,6 +104,7 @@ class Menu:
         return True
 
     def mainloop(self) -> NoReturn:
+        """Main loop for the menu"""
         while True:
             screen.fill(WHITE)
             time_delta = self.clock.tick(60) / 1000.0
@@ -122,21 +128,23 @@ def hamming_distance(current_positions: list[int], correct_positions: list[int])
 
 
 def simulate_tile_positions(total_tiles: int) -> list[int]:
-    """
-    Simulate random tile position to produce random Hamming distance
-    """
+    """Simulate random tile position to produce random Hamming distance"""
     return random.sample(range(total_tiles), total_tiles)
 
 
 class PlayGameView:
+    """Intermediary "view" before launching game"""
+
     def __init__(self, filename):
         self.filename = filename
         self.num_of_tiles = None
 
     def event_handler(self, _):
+        """For compatibility purposes"""
         return True
 
     def show(self):
+        """Bad name (for compatibility purposes), starts the game"""
         image = get_image(self.filename, SCREEN_DIMENSIONS, self.num_of_tiles)
         correct_tiles = generate_tiles(image, self.num_of_tiles)
 
