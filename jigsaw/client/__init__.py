@@ -1,5 +1,5 @@
 #!/usr/bin/venv python3
-from .game import GameClient
-from .constants import WHITE, RED, BLUE, WIDTH, HEIGHT, screen, font, manager
-from .settings_view import SettingsView
+from .constants import BLUE, HEIGHT, RED, WHITE, WIDTH, font, manager, screen
 from .credits_view import CreditsView
+from .game import GameClient
+from .settings_view import SettingsView

@@ -1,15 +1,12 @@
 import random
 
 import pygame_gui
-from pygame import init, draw, Rect, display, time, event, quit
-from pygame.locals import QUIT, USEREVENT
-
-from client.constants import WHITE, WIDTH, HEIGHT, screen, manager
+from client import GameClient
+from client.constants import HEIGHT, WHITE, WIDTH, manager, screen
 from client.credits_view import CreditsView
 from client.settings_view import SettingsView
-
-
-from client import GameClient
+from pygame import Rect, display, draw, event, init, quit, time
+from pygame.locals import QUIT, USEREVENT
 from tessellation import generate_tiles
 from utils import get_image, tile_scrambler
 
@@ -27,6 +24,8 @@ init()
 
 
 class Menu:
+    """Menu view and controller"""
+
     def __init__(self, filename):
         self.view_instances = {
             "settings": SettingsView(),
@@ -38,6 +37,7 @@ class Menu:
         self.build()
 
     def build(self):
+        """Builds the menu's layout"""
         button_size = (100, 50)
         right_edge = WIDTH - button_size[0]
         count = 83
@@ -45,18 +45,20 @@ class Menu:
         for mode in MODES:
             rectangle = Rect((right_edge - 50, count), button_size)
             button = pygame_gui.elements.UIButton(
-                relative_rect=rectangle, text=mode.title(), manager=manager)
+                relative_rect=rectangle, text=mode.title(), manager=manager
+            )
             count += 83
             setattr(self, f"{mode}_button", button)
 
         self.right_panel = pygame_gui.elements.UIPanel(
             relative_rect=Rect((WIDTH - 200, 0), (200, HEIGHT)),
             starting_height=0,
-            manager=manager
+            manager=manager,
         )
 
     def draw_completion_bar(self, completion_percent, position, size):
-        """ Draws a completion bar on the screen.
+        """Draws a completion bar on the screen.
+
         Args:
             screen (pygame.Surface): The surface to draw on.
             completion_percent (float): The completion percentage (0.0.to 1.0)
@@ -72,6 +74,7 @@ class Menu:
         draw.rect(screen, fill_color, (position[0], position[1], fill_width, size[1]))
 
     def event_handler(self, e):
+        """Event handler for the menu"""
         if e.type == QUIT:
             quit()
         if e.type == USEREVENT:
@@ -90,6 +93,7 @@ class Menu:
         return True
 
     def mainloop(self):
+        """Main loop for the menu"""
         while True:
             screen.fill(WHITE)
             time_delta = self.clock.tick(60) / 1000.0
@@ -106,25 +110,30 @@ class Menu:
 
 def hamming_distance(current_positions, correct_positions):
     """Calculate the Hamming distance between the current puzzle positions and the correct positions."""
-    return sum(current != correct for current, correct in zip(current_positions, correct_positions))
+    return sum(
+        current != correct
+        for current, correct in zip(current_positions, correct_positions)
+    )
 
 
 def simulate_tile_positions(total_tiles):
-    """
-    Simulate random tile position to produce random Hamming distance
-    """
+    """Simulate random tile position to produce random Hamming distance"""
     return random.sample(range(total_tiles), total_tiles)
 
 
 class PlayGameView:
+    """Intermediary "view" before launching game"""
+
     def __init__(self, filename):
         self.filename = filename
         self.num_of_tiles = None
 
     def event_handler(self, _):
+        """For compatibility purposes"""
         return True
 
     def show(self):
+        """Bad name (for compatibility purposes), starts the game"""
         image = get_image(self.filename, SCREEN_DIMENSIONS, self.num_of_tiles)
         correct_tiles = generate_tiles(image, self.num_of_tiles)
 

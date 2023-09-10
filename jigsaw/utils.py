@@ -10,12 +10,6 @@ from os import listdir, path
 from random import choice, randint, shuffle
 from typing import Any, cast
 
-from google.auth.transport.requests import Request
-from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
-from PIL import Image
-from requests import get
-
 from fcolor import (
     analogue_palette,
     complementary_color,
@@ -23,7 +17,12 @@ from fcolor import (
     monochrome_palette,
     rotate_color,
 )
+from google.auth.transport.requests import Request
+from google.oauth2.credentials import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
 from modifier import backing
+from PIL import Image
+from requests import get
 
 SCOPES = ["https://www.googleapis.com/auth/photoslibrary.readonly"]
 BASE_URL = "https://photoslibrary.googleapis.com/v1/"
