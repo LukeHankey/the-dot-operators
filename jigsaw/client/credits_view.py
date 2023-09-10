@@ -1,6 +1,6 @@
 import pygame
 import pygame_gui
-from constants import screen, WHITE, BLUE, WIDTH, manager, HEIGHT
+from client.constants import screen, WHITE, BLUE, WIDTH, manager, HEIGHT
 from pygame.locals import QUIT
 
 back_button = pygame_gui.elements.UIButton(
@@ -11,7 +11,7 @@ back_button = pygame_gui.elements.UIButton(
 )
 
 
-def credits_view():
+def credits_view(*_):
     screen.fill(WHITE)
 
     title_font = pygame.font.Font(None, 48)

@@ -7,6 +7,7 @@ from os.path import exists, join, split
 from random import choice
 
 from client import GameClient
+from client.menu import Menu
 from tessellation import generate_tiles
 from utils import get_image, tile_scrambler
 
@@ -23,6 +24,9 @@ DEFAULT_OVERLAP = 0.25
 
 MIN_TILE_NUMBER = 16
 DEFAULT_TILE_NUMBER = 36
+
+menu = Menu()
+menu.mainloop()
 
 path = join(split(__file__)[0], "images")
 filename = choice(
@@ -47,3 +51,4 @@ game.mainloop()
 
 with open(LOG_FILENAME, "w") as log_file:
     dump(game_log, log_file, indent=1)
+

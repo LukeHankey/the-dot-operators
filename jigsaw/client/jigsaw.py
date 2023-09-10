@@ -62,7 +62,7 @@ class JigSaw(Surface):
         """Handler for if mouse press down in jigsaw surface"""
         # [::-1] reverse list check is downwards in z depth
         for tile in tiles.sprites()[::-1]:
-            if tile.is_within_image(self.translate(mouse_position)):
+            if tile.rect.collidepoint(self.translate(mouse_position)):
                 tiles.remove(tile)
                 tiles.add(tile)  # reorder to top
                 tile.activate(mouse_position)
