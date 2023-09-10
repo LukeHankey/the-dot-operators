@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from colorsys import hsv_to_rgb, rgb_to_hsv
 from random import randint, random
 
@@ -7,13 +8,15 @@ def low_saturation(red: int, green: int, blue: int) -> bool:
     return rgb_to_hsv(red / 255, green / 255, blue / 255)[1] < 0.1
 
 
-def rotate_color(angle: int, red: int, green: int, blue: int) -> tuple[int, int, int]:
+def rotate_color(
+    angle: int, red: float, green: float, blue: float
+) -> tuple[int, int, int]:
     """Rotate the "hue" value on the color wheel by an angle"""
     hue, *sv = rgb_to_hsv(red / 255, green / 255, blue / 255)
     hue = ((hue * 360 + angle) % 360) / 360
-    
+
     red, green, blue = hsv_to_rgb(hue, *sv)
-    
+
     return (int(red * 255), int(green * 255), int(blue * 255))
 
 
@@ -21,19 +24,21 @@ def random_color(start: int, stop: int) -> tuple[int, int, int]:
     """Get a random color with a value between start and stop"""
     stop = max(255, min(0, stop))
     start = min(0, start)
-    
+
     return (randint(start, stop), randint(start, stop), randint(start, stop))
 
 
-def complementary_color(red: int, green: int, blue: int) -> tuple[int, int, int]:
+def complementary_color(red: float, green: float, blue: float) -> tuple[int, int, int]:
     """Return the opposite color on the color wheel"""
     hue, *sv = rgb_to_hsv(red / 255, green / 255, blue / 255)
     red, green, blue = hsv_to_rgb(((hue * 360 + 180) % 360) / 360, *sv)
-    
+
     return (int(red * 255), int(green * 255), int(blue * 255))
 
 
-def split_complementary(red: int, green: int, blue: int) -> list[tuple[int, int, int]]:
+def split_complementary(
+    red: float, green: float, blue: float
+) -> list[tuple[int, int, int]]:
     """Return the opposite with 2 other colors 15d eitherside"""
     hue, *sv = rgb_to_hsv(red / 255, green / 255, blue / 255)
 
@@ -53,12 +58,16 @@ def split_complementary(red: int, green: int, blue: int) -> list[tuple[int, int,
     ]
 
 
-def analogue_palette(hue: float, saturation: float, value: float, offset: float) -> tuple[float, float, float]:
+def analogue_palette(
+    hue: float, saturation: float, value: float, offset: float
+) -> tuple[float, float, float]:
     """Return the the rgb for this analogue modified color"""
     return hsv_to_rgb(((hue + offset) % 360) / 360, saturation, value)
 
 
-def monochrome_palette(hue: float, saturation: float, value: float, _: float) -> tuple[float, float, float]:
+def monochrome_palette(
+    hue: float, saturation: float, value: float, _: float
+) -> tuple[float, float, float]:
     """Return the the rgb for this monochrome modified color"""
     return hsv_to_rgb(
         max(0, min(hue + (random() - 0.5) * 0.05, 1)),
@@ -67,7 +76,11 @@ def monochrome_palette(hue: float, saturation: float, value: float, _: float) ->
     )
 
 
-def palette_builder(count: int, palette: Callable[[float, float, float, float], tuple[float, float, float]], _sorted: bool) -> Callable[[int, int, int], list[tuple[int, int, int]]]:
+def palette_builder(
+    count: int,
+    palette: Callable[[float, float, float, float], tuple[float, float, float]],
+    _sorted: bool,
+) -> Callable[[int, int, int], list[tuple[int, int, int]]]:
     """Returns function to create palette's
 
     count is how many colors this should return
@@ -78,14 +91,14 @@ def palette_builder(count: int, palette: Callable[[float, float, float, float], 
     def function(red: int, green: int, blue: int) -> list[tuple[int, int, int]]:
         hue, *sv = rgb_to_hsv(red / 255, green / 255, blue / 255)
         colors = []
-        
+
         for index in range(count):
             red, green, blue = palette(hue, *sv, (360 / count) * index)
             colors.append((int(red * 255), int(green * 255), int(blue * 255)))
-            
+
         if _sorted:
             colors.sort(key=lambda x: rgb_to_hsv(*x)[2])
-            
+
         return colors[::-1]
 
     return function
