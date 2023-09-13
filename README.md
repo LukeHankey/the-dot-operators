@@ -1,6 +1,6 @@
 # The-dot-opertator's submission
 
-## Our game
+## Our solution
 It's a jigsaw game. The goal is simple, you simply have to put the pieces together to form the image.
 
 ## Features
@@ -41,7 +41,7 @@ $ .venv/bin/Activate.ps1
 ```
 
 #### Installing the Dependencies
-Once the environment is created and activated, use this command to install the development dependencies.
+Once the environment is created and activated, use this command to install the game's dependencies.
 ```shell
 $ pip install -r requirements.txt
 $ pip install pygame_gui==0.6.9
